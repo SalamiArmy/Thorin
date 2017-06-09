@@ -134,7 +134,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = get.Google_Custom_Search(args)
-        return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results,
+        return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                                      total_sent, total_offset)
     return int(total_sent)
 
