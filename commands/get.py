@@ -61,7 +61,7 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'safe': 'off',
             'q': requestText,
             'start': 1}
-    Send_Images(bot, chat_id, user, requestText, args, totalResults, keyConfig)
+    Send_Images(bot, chat_id, user, requestText, args, keyConfig, totalResults)
 
 
 def Google_Custom_Search(args):
@@ -119,7 +119,7 @@ def Image_Tags(imagelink, keyConfig):
         tags += tag['name'] + ', '
     return tags.rstrip(', ')
 
-def Send_Images(bot, chat_id, user, requestText, args, number, keyConfig):
+def Send_Images(bot, chat_id, user, requestText, args, keyConfig, number=1):
     data, total_results, results_this_page = Google_Custom_Search(args)
     if 'items' in data and total_results > 0:
         total_offset, total_results, total_sent = search_results_walker(args, bot, chat_id, data, number, user + ', ' + requestText,

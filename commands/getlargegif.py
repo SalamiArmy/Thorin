@@ -12,4 +12,4 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'fileType': 'gif',
             'start': 1,
             'imgSize': 'large'}
-    getgif.Send_Animated_Gifs(bot, chat_id, user, requestText, args, totalResults)
+    getgif.Send_Animated_Gifs(bot, chat_id, user, requestText, args, keyConfig, totalResults)
