@@ -114,6 +114,7 @@ def Image_Tags(imagelink, keyConfig):
         method=urlfetch.POST,
         headers=headers)
     data = json.loads(result.content)
+    print(result.content)
     tags = ''
     for tag in data['tags']:
         tags += tag['name'] + ', '
