@@ -58,7 +58,7 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'q': requestText,
             'fileType': 'gif',
             'start': 1}
-    Send_Animated_Gifs(bot, chat_id, user, requestText, args, totalResults, keyConfig)
+    Send_Animated_Gifs(bot, chat_id, user, requestText, args, keyConfig, totalResults)
 
 
 def is_valid_gif(imagelink):
