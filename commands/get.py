@@ -7,6 +7,7 @@ import sys
 
 import io
 from google.appengine.ext import ndb
+from google.appengine.api import urlfetch
 
 from commands import retry_on_telegram_error
 
@@ -60,7 +61,7 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'safe': 'off',
             'q': requestText,
             'start': 1}
-    Send_Images(bot, chat_id, user, requestText, args, totalResults)
+    Send_Images(bot, chat_id, user, requestText, args, totalResults, keyConfig)
 
 
 def Google_Custom_Search(args):
@@ -102,12 +103,27 @@ def ImageIsSmallEnough(imagelink):
         except NameError:
             print("image_file or fd global not defined")
 
+def Image_Tags(imagelink, keyConfig):
+    vision_url = 'https://westeurope.api.cognitive.microsoft.com/vision/v1.0/tag'
+    headers = {'Content-Type': 'application/json',
+               'Ocp-Apim-Subscription-Key': keyConfig.get('Bing', 'VisionApiKey')}
+    requestPayload = '{"url":"' + imagelink + '"}'
+    result = urlfetch.fetch(
+        url=vision_url,
+        payload=requestPayload,
+        method=urlfetch.POST,
+        headers=headers)
+    data = json.loads(result.content)
+    tags = ''
+    for tag in data['tags']:
+        tags += tag['name'] + ', '
+    return tags.rstrip(', ')
 
-def Send_Images(bot, chat_id, user, requestText, args, number):
+def Send_Images(bot, chat_id, user, requestText, args, number, keyConfig):
     data, total_results, results_this_page = Google_Custom_Search(args)
     if 'items' in data and total_results > 0:
         total_offset, total_results, total_sent = search_results_walker(args, bot, chat_id, data, number, user + ', ' + requestText,
-                                                                        results_this_page, total_results)
+                                                                        results_this_page, total_results, keyConfig)
         if int(total_sent) < int(number):
             if int(number) > 1:
                 bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
@@ -131,7 +147,7 @@ def Send_Images(bot, chat_id, user, requestText, args, number):
                                                   string.capwords(requestText.encode('utf-8')))
 
 
-def search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results,
+def search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                           total_offset=0, total_sent=0):
     offset_this_page = 0
     while int(total_sent) < int(number) and int(offset_this_page) < int(results_this_page):
@@ -143,8 +159,10 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
         if not wasPreviouslySeenImage(chat_id, imagelink):
             addPreviouslySeenImagesValue(chat_id, imagelink)
             if is_valid_image(imagelink):
+                ImageTags = Image_Tags(imagelink, keyConfig)
                 if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
-                        (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '')):
+                        (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
+                        (' (I see' + ImageTags + ')' if ImageTags != '' else '')):
                     total_sent += 1
                     print('sent image number ' + str(total_sent))
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
