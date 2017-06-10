@@ -177,7 +177,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
 
 def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
     print('checking if ' + str(chat_id) + ' is an admin')
-    if chat_id == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or chat_id == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
+    if str(chat_id) == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or str(chat_id) == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
         full_nude_detection_debug_info = ''
 
         req = urllib2.Request('https://sightengine-nudity-and-adult-content-detection.p.mashape.com/nudity.json'+ '?' + urllib.urlencode({'url': image_link}))
@@ -188,7 +188,7 @@ def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
         if 'status' in data and data['status'] == 'success':
             full_nude_detection_debug_info += str(100-(data['nudity']['safe']*100)) + '% porn according to Sight Engine\'s API\n'
 
-        req = urllib2.Request('https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php'+ '?' + urllib.urlencode({'url': image_link}))
+        req = urllib2.Request('https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php' + '?' + urllib.urlencode({'url': image_link}))
         req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
         resp = urllib2.urlopen(req)
         response_content = resp.read()
