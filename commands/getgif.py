@@ -136,3 +136,4 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
         return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                                      total_sent, total_offset)
     return int(total_sent)
+ 
