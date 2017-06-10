@@ -182,21 +182,30 @@ def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
         req = urllib2.Request('https://sightengine-nudity-and-adult-content-detection.p.mashape.com/nudity.json'+ '?' + urllib.urlencode({'url': image_link}))
         req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
         resp = urllib2.urlopen(req)
-        data = json.loads(resp.read())
+        response_content = resp.read()
+        data = json.loads(response_content)
         if 'status' in data and data['status'] == 'success':
             full_nude_detection_debug_info += str(100-(data['nudity']['safe']*100)) + '% porn according to Sight Engine\'s API\n'
 
-        req = urllib2.Request('https://netspark-nude-detect-v1.p.mashape.com/url/'+ image_link)
-        req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
-        resp = urllib2.urlopen(req)
-        data = json.loads(resp.read())
-        if 'status' in data and data['status'] == 'success':
-            full_nude_detection_debug_info += data['is nude']['confidence'] + ' porn according to Netspark\'s API\n'
+        vision_url = 'https://nuditysearch.p.mashape.com/nuditySearch/image'
+        headers = {'Content-Type': 'application/json',
+                   'X-Mashape-Key': key_config.get('Mashape', 'key')}
+        requestPayload = '{"objecturl":"' + image_link + '","setting":3}'
+        result = urlfetch.fetch(
+            url=vision_url,
+            payload=requestPayload,
+            method=urlfetch.POST,
+            headers=headers)
+        response_content = result.content
+        data = json.loads(response_content)
+        if 'score' in data:
+            full_nude_detection_debug_info += str(data['score']) + '% porn according to Image Vision\'s API\n'
 
         req = urllib2.Request('https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php'+ '?' + urllib.urlencode({'url': image_link}))
         req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
         resp = urllib2.urlopen(req)
-        data = json.loads(resp.read())
+        response_content = resp.read()
+        data = json.loads(response_content)
         if 'Is Porn' in data:
             full_nude_detection_debug_info += ('Is porn' if data['Is Porn'] == 'True' else 'Is not porn') + ' according to Sphire Labs\'s API\n'
 
