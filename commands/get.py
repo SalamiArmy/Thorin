@@ -115,8 +115,9 @@ def Image_Tags(imagelink, keyConfig):
         headers=headers)
     data = json.loads(result.content)
     tags = ''
-    for tag in data['tags']:
-        tags += tag['name'] + ', '
+    if 'tags' in data:
+        for tag in data['tags']:
+            tags += tag['name'] + ', '
     return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, number=1):
