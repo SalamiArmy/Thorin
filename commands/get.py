@@ -6,6 +6,8 @@ import urllib
 import sys
 
 import io
+import urllib2
+
 from google.appengine.ext import ndb
 from google.appengine.api import urlfetch
 
@@ -165,9 +167,37 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                         (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
                         (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
                     total_sent += 1
+                    send_detect_porn_debugging(bot, chat_id, imagelink, keyConfig)
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = Google_Custom_Search(args)
         return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_offset, keyConfig,
                                      total_results, total_sent)
     return total_offset, total_results, total_sent
+
+def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
+    if chat_id == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or chat_id == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
+        full_nude_detection_debug_info = ''
+
+        req = urllib2.Request('https://sightengine-nudity-and-adult-content-detection.p.mashape.com/nudity.json'+ '?' + urllib.urlencode({'url': image_link}))
+        req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
+        resp = urllib2.urlopen(req)
+        data = json.loads(resp.read())
+        if 'status' in data and data['status'] == 'success':
+            full_nude_detection_debug_info += str(100-(data['nudity']['safe']*100)) + '% porn according to Sight Engine\'s API\n'
+
+        req = urllib2.Request('https://netspark-nude-detect-v1.p.mashape.com/url/'+ image_link)
+        req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
+        resp = urllib2.urlopen(req)
+        data = json.loads(resp.read())
+        if 'status' in data and data['status'] == 'success':
+            full_nude_detection_debug_info += data['is nude']['confidence'] + ' porn according to Netspark\'s API\n'
+
+        req = urllib2.Request('https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php'+ '?' + urllib.urlencode({'url': image_link}))
+        req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
+        resp = urllib2.urlopen(req)
+        data = json.loads(resp.read())
+        if 'Is Porn' in data:
+            full_nude_detection_debug_info += ('Is porn' if data['Is Porn'] == 'True' else 'Is not porn') + ' according to Sphire Labs\'s API\n'
+
+        bot.sendMessage(chat_id=chat_id, text=full_nude_detection_debug_info)
