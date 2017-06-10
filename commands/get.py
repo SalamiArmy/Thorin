@@ -176,6 +176,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
     return total_offset, total_results, total_sent
 
 def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
+    print('checking if ' + chat_id + ' is an admin')
     if chat_id == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or chat_id == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
         full_nude_detection_debug_info = ''
 
