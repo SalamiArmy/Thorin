@@ -177,22 +177,32 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
 
 def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
     if str(chat_id) == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or str(chat_id) == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
-        full_nude_detection_debug_info = ''
+        full_nude_detection_debug_info = 'Might I add, I\'m testing porn detection APIs.\n'
 
         req = urllib2.Request('https://sightengine-nudity-and-adult-content-detection.p.mashape.com/nudity.json'+ '?' + urllib.urlencode({'url': image_link}))
         req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
         resp = urllib2.urlopen(req)
         response_content = resp.read()
-        data = json.loads(response_content)
-        if 'status' in data and data['status'] == 'success':
-            full_nude_detection_debug_info += str(100-(data['nudity']['safe']*100)) + '% porn according to Sight Engine\'s API\n'
+        Sight_Engine_data = json.loads(response_content)
+        if 'status' not in Sight_Engine_data or Sight_Engine_data['status'] != 'success':
+            return
+        is_porn_percent = 100 - (Sight_Engine_data['nudity']['safe'] * 100)
+        full_nude_detection_debug_info += str(is_porn_percent) + '% porn according to Sight Engine\'s API\n'
 
         req = urllib2.Request('https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php' + '?' + urllib.urlencode({'url': image_link}))
         req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
         resp = urllib2.urlopen(req)
         response_content = resp.read()
-        data = json.loads(response_content)
-        if 'Is Porn' in data:
-            full_nude_detection_debug_info += ('Is porn' if data['Is Porn'] == 'True' else 'Is not porn') + ' according to Sphire Labs\'s API\n'
+        Sphire_Labs_data = json.loads(response_content)
+        if 'Is Porn' not in Sphire_Labs_data:
+            return
+        is_porn = Sphire_Labs_data['Is Porn']
+        full_nude_detection_debug_info += ('Is porn' if is_porn == 'True' else 'Is not porn') + ' according to Sphire Labs\'s API\n'
 
-        bot.sendMessage(chat_id=chat_id, text=full_nude_detection_debug_info)
+        if is_porn == 'True' and is_porn_percent > 50:
+            full_nude_detection_debug_info += 'Admin, I would consider this porn.'
+        else:
+            full_nude_detection_debug_info += 'Admin, this is safe.'
+        full_nude_detection_debug_info += '\n' + image_link
+
+        bot.sendMessage(chat_id=chat_id, text=full_nude_detection_debug_info, disable_web_page_preview=True)
