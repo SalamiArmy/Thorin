@@ -120,7 +120,7 @@ def Image_Tags(imagelink, keyConfig):
     if 'tags' in data:
         for tagBookmark in data['tags']:
             tag = tagBookmark['name']
-            if tagBookmark == 'person' and send_detect_porn_debugging(imagelink, keyConfig):
+            if tag == 'person' and send_detect_porn_debugging(imagelink, keyConfig):
                 tag = 'porn'
             tags += tag + ', '
     return tags.rstrip(', ')
