@@ -202,7 +202,7 @@ def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
         if is_porn == 'True' and is_porn_percent > 50:
             full_nude_detection_debug_info += 'Admin, I would consider this porn.'
         else:
-            full_nude_detection_debug_info += 'Admin, this is safe.'
+            full_nude_detection_debug_info += 'Admin, I think this is safe.'
         full_nude_detection_debug_info += '\n' + image_link
 
         bot.sendMessage(chat_id=chat_id, text=full_nude_detection_debug_info, disable_web_page_preview=True)
