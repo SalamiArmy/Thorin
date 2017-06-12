@@ -61,7 +61,10 @@ def run(bot, chat_id, user='Dave', keyConfig=None, message='', totalResults=1):
     if not AllWatchesContains(chat_id):
         addToAllWatches(chat_id)
     data, results_this_page, after = reddit_top_gifs_search()
-    if multipage_top_gifs_walker(after, bot, chat_id, data, totalResults) <= 0:
+    topGifs = multipage_top_gifs_walker(after, bot, chat_id, data, totalResults)
+    data, results_this_page, after = reddit_top_contentawarescale_gifs_search()
+    topContentAwareScaleGifs = multipage_top_gifs_walker(after, bot, chat_id, data, totalResults)
+    if topGifs <= 0 and topContentAwareScaleGifs <= 0:
         bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
                                               ', I\'m afraid you\'ve seen all the best gifs I can find.')
 
@@ -72,7 +75,17 @@ def reddit_top_gifs_search(after=''):
     else:
         topgifs = 'https://www.reddit.com/r/gifs/top.json?t=all&after=' + after
     topgifsUrlRequest = urlfetch.fetch(url=topgifs, headers={
-        'User-Agent': 'App Engine:Scenic-Oxygen:ImageBoet:v1.0 (by /u/SalamiArmy)'})
+        'User-Agent': 'App Engine:Scenic-Oxygen:ImageBoet:v0.9 (by /u/SalamiArmy)'})
+    data = json.loads(topgifsUrlRequest.content)
+    return data, len(data['data']['children']), data['data']['after']
+
+def reddit_top_contentawarescale_gifs_search(after=''):
+    if after =='':
+        topgifs = 'https://www.reddit.com/r/contentawarescale/top.json?t=all'
+    else:
+        topgifs = 'https://www.reddit.com/r/contentawarescale/top.json?t=all&after=' + after
+    topgifsUrlRequest = urlfetch.fetch(url=topgifs, headers={
+        'User-Agent': 'App Engine:Scenic-Oxygen:ImageBoet:v0.9 (by /u/SalamiArmy)'})
     data = json.loads(topgifsUrlRequest.content)
     return data, len(data['data']['children']), data['data']['after']
 
