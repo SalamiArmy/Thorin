@@ -2,6 +2,8 @@
 import sys
 from time import sleep
 
+import telegram
+
 
 def IsTooLongForCaption(text):
     return len(text) > 200
@@ -23,6 +25,8 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
             if (IsUrlTooLongForCaption):
                 print encodedImageLink
             sendException = False
+        except telegram.error.BadRequest:
+            break
         except:
             sendException = True
             numberOfRetries -= 1
@@ -47,6 +51,8 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
             if (IsUrlTooLongForCaption):
                 print imagelink
             sendException = False
+        except telegram.error.BadRequest:
+            break
         except:
             sendException = True
             numberOfRetries -= 1
