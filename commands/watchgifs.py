@@ -91,7 +91,7 @@ def reddit_top_contentawarescale_gifs_search(after=''):
 
 def multipage_top_gifs_walker(after, bot, chat_id, data, number=1, results_this_page=25, total_sent=0):
     offset_this_page = 0
-    while int(total_sent) < int(number) and int(offset_this_page) < 25:
+    while int(total_sent) < int(number) and int(offset_this_page) < results_this_page:
         gif_url = data['data']['children'][offset_this_page]['data']['url']
         imagelink = gif_url[:-1] if gif_url.endswith('.gifv') else gif_url
         caption = data['data']['children'][offset_this_page]['data']['title'].replace(' - Create, Discover and Share GIFs on Gfycat', '')# + '\n https://www.reddit.com' + \
