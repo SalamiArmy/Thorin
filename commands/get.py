@@ -6,7 +6,6 @@ import urllib
 import sys
 
 import io
-import urllib2
 
 from google.appengine.ext import ndb
 from google.appengine.api import urlfetch
@@ -119,10 +118,62 @@ def Image_Tags(imagelink, keyConfig):
     tags = ''
     if 'tags' in data:
         for tagBookmark in data['tags']:
-            tag = tagBookmark['name']
-            #if tag == 'person' and send_detect_porn_debugging(imagelink, keyConfig):
-            #    tag = 'porn'
-            tags += tag + ', '
+            tags += tagBookmark['name'] + ', '
+
+    strPayload = str({
+        "requests":
+            [
+                {
+                    "features":
+                        [
+                            {
+                                "type": "LABEL_DETECTION"
+                            },
+                            {
+                                "type": "SAFE_SEARCH_DETECTION"
+                            }
+                        ],
+                    "image":
+                        {
+                            "source":
+                                {
+                                    "imageUri": str(imagelink)
+                                }
+                        }
+                }
+            ]
+    })
+    raw_data = urlfetch.fetch(
+        url='https://vision.googleapis.com/v1/images:annotate?key=' + keyConfig.get('Google', 'GCSE_APP_ID'),
+        payload=strPayload,
+        method='POST',
+        headers={'Content-type': 'application/json'})
+    visionData = json.loads(raw_data.content)
+    if 'error' not in visionData:
+        if 'error' not in visionData['responses'][0]:
+            for tag in visionData['responses'][0]['labelAnnotations']:
+                if (tag['description'] + ', ') not in tags:
+                    tags += tag['description'] + ', '
+    strAdult = visionData['responses'][0]['safeSearchAnnotation']['adult']
+    if strAdult == 'POSSIBLE' or \
+        strAdult == 'LIKELY' or \
+        strAdult == 'VERY_LIKELY':
+        tags += strAdult.lower() + " porn, "
+    strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
+    if strViolence == 'POSSIBLE' or \
+        strViolence == 'LIKELY' or \
+        strViolence == 'VERY_LIKELY':
+        tags += strViolence.replace('_', ' ').lower() + " violence, "
+    strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
+    if strMedical == 'POSSIBLE' or \
+        strMedical == 'LIKELY' or \
+        strMedical == 'VERY_LIKELY':
+        tags += strMedical.replace('_', ' ').lower() + " medical, "
+    strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
+    if strSpoof == 'POSSIBLE' or \
+        strSpoof == 'LIKELY' or \
+        strSpoof == 'VERY_LIKELY':
+        tags += strSpoof.replace('_', ' ').lower() + " spoof, "
     return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, number=1):
@@ -170,79 +221,9 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                         (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
                         (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
                     total_sent += 1
-                    send_detect_porn_debugging(bot, chat_id, imagelink, keyConfig)
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = Google_Custom_Search(args)
         return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_offset, keyConfig,
                                      total_results, total_sent)
     return total_offset, total_results, total_sent
-
-def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
-    if str(chat_id) == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or str(chat_id) == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
-        strPayload = str({
-                "requests":
-                    [
-                        {
-                            "features":
-                                [
-                                    {
-                                        "type": "LABEL_DETECTION"
-                                    },
-                                    {
-                                        "type": "SAFE_SEARCH_DETECTION"
-                                    },
-                                    {
-                                        "type": "WEB_DETECTION"
-                                    }
-                                ],
-                            "image":
-                                {
-                                    "source":
-                                        {
-                                            "imageUri": str(image_link)
-                                        }
-                                }
-                        }
-                    ]
-            })
-        raw_data = urlfetch.fetch(
-            url='https://vision.googleapis.com/v1/images:annotate?key=' + key_config.get('Google', 'GCSE_APP_ID'),
-            payload=strPayload,
-            method='POST',
-            headers={'Content-type': 'application/json'})
-        data = json.loads(raw_data.content)
-        if 'error' not in data:
-            if 'error' not in data['responses'][0]:
-                strTags = ''
-                for tag in data['responses'][0]['labelAnnotations']:
-                    strTags += tag['description'] + ', '
-                strWebEntities = ''
-                for entity in data['responses'][0]['webDetection']['webEntities']:
-                    strWebEntities += entity['description'] + ', '
-                strFullMatchingImages = ''
-                for image in data['responses'][0]['webDetection']['fullMatchingImages']:
-                    strFullMatchingImages += image['url'] + ', '
-                strPartialMatchingImages = ''
-                for image in data['responses'][0]['webDetection']['partialMatchingImages']:
-                    strPartialMatchingImages += image['url'] + ', '
-                strPagesWithMatchingImages = ''
-                for image in data['responses'][0]['webDetection']['pagesWithMatchingImages']:
-                    strPagesWithMatchingImages += image['url'] + ', '
-                strVisuallySimilarImages = ''
-                for image in data['responses'][0]['webDetection']['visuallySimilarImages']:
-                    strVisuallySimilarImages += image['url'] + ', '
-                bot.sendMessage(chat_id=chat_id, text='Adult? ' + data['responses'][0]['safeSearchAnnotation']['adult'] + '\n' +
-                                                      'Spoof? ' + data['responses'][0]['safeSearchAnnotation']['spoof'] + '\n' +
-                                                      'Medical? ' + data['responses'][0]['safeSearchAnnotation']['medical'] + '\n' +
-                                                      'Violence? ' + data['responses'][0]['safeSearchAnnotation']['violence'] + '\n' +
-                                                      'Label Annotations: ' + strTags.rstrip(', ') + '\n' +
-                                                      'Web Entities: ' + strWebEntities.rstrip(', ') + '\n' +
-                                                      'Full Matching Images: ' + strFullMatchingImages.rstrip(', ') + '\n' +
-                                                      'Partial Matching Images: ' + strPartialMatchingImages.rstrip(', ') + '\n' +
-                                                      'Pages With Matching Images: ' + strPagesWithMatchingImages.rstrip(', ') + '\n' +
-                                                      'Visually Similar Images: ' + strVisuallySimilarImages.rstrip(', '), disable_web_page_preview=True)
-            else:
-                bot.sendMessage(chat_id=chat_id, text=data['responses'][0]['error']['message'], disable_web_page_preview=True)
-        else:
-            bot.sendMessage(chat_id=chat_id, text=data['error']['message'], disable_web_page_preview=True)
