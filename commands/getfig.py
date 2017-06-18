@@ -10,4 +10,4 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'safe': 'off',
             'q': 'fig',
             'start': 1}
-    get.Send_First_Valid_Image(bot, chat_id, user, requestText, args)
+    get.Send_Images(bot, chat_id, user, requestText, args, keyConfig, totalResults)
