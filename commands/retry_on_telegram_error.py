@@ -25,7 +25,7 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
                 bot.sendDocument(chat_id=chat_id,
                                  document=encodedImageLink,
                                  filename=requestText.replace('.',''))
-                bot.sendMessage(chat_id=chat_id, text=caption_text)
+                bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
             sendException = False
         except telegram.error.BadRequest:
             break
@@ -53,7 +53,7 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
             else:
                 bot.sendPhoto(chat_id=chat_id,
                               photo=encodedImageLink)
-                bot.sendMessage(chat_id=chat_id, text=caption_text)
+                bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
             sendException = False
         except telegram.error.BadRequest:
             break
