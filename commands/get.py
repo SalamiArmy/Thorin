@@ -170,6 +170,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                         (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
                         (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
                     total_sent += 1
+                    send_detect_porn_debugging(bot, chat_id, imagelink, keyConfig)
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = Google_Custom_Search(args)
@@ -177,26 +178,71 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                                      total_results, total_sent)
     return total_offset, total_results, total_sent
 
-def send_detect_porn_debugging(image_link, key_config):
-    req = urllib2.Request('https://sightengine-nudity-and-adult-content-detection.p.mashape.com/nudity.json'+ '?' + urllib.urlencode({'url': image_link}))
-    req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
-    resp = urllib2.urlopen(req)
-    response_content = resp.read()
-    Sight_Engine_data = json.loads(response_content)
-    if 'status' not in Sight_Engine_data or Sight_Engine_data['status'] != 'success':
-        return False
-    is_porn_percent = 100 - (Sight_Engine_data['nudity']['safe'] * 100)
-
-    req = urllib2.Request('https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php' + '?' + urllib.urlencode({'url': image_link}))
-    req.add_header('X-Mashape-Key', key_config.get('Mashape', 'key'))
-    resp = urllib2.urlopen(req)
-    response_content = resp.read()
-    Sphire_Labs_data = json.loads(response_content)
-    if 'Is Porn' not in Sphire_Labs_data:
-        return False
-    is_porn = Sphire_Labs_data['Is Porn']
-
-    if is_porn != 'True' or is_porn_percent <= 50:
-        return False
-
-    return True
+def send_detect_porn_debugging(bot, chat_id, image_link, key_config):
+    if str(chat_id) == key_config.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID') or str(chat_id) == key_config.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'):
+        strPayload = str({
+                "requests":
+                    [
+                        {
+                            "features":
+                                [
+                                    {
+                                        "type": "LABEL_DETECTION"
+                                    },
+                                    {
+                                        "type": "SAFE_SEARCH_DETECTION"
+                                    },
+                                    {
+                                        "type": "WEB_DETECTION"
+                                    }
+                                ],
+                            "image":
+                                {
+                                    "source":
+                                        {
+                                            "imageUri": str(image_link)
+                                        }
+                                }
+                        }
+                    ]
+            })
+        raw_data = urlfetch.fetch(
+            url='https://vision.googleapis.com/v1/images:annotate?key=' + key_config.get('Google', 'GCSE_APP_ID'),
+            payload=strPayload,
+            method='POST',
+            headers={'Content-type': 'application/json'})
+        data = json.loads(raw_data.content)
+        if 'error' not in data:
+            if 'error' not in data['responses'][0]:
+                strTags = ''
+                for tag in data['responses'][0]['labelAnnotations']:
+                    strTags += tag['description'] + ', '
+                strWebEntities = ''
+                for entity in data['responses'][0]['webDetection']['webEntities']:
+                    strWebEntities += entity['description'] + ', '
+                strFullMatchingImages = ''
+                for image in data['responses'][0]['webDetection']['fullMatchingImages']:
+                    strFullMatchingImages += image['url'] + ', '
+                strPartialMatchingImages = ''
+                for image in data['responses'][0]['webDetection']['partialMatchingImages']:
+                    strPartialMatchingImages += image['url'] + ', '
+                strPagesWithMatchingImages = ''
+                for image in data['responses'][0]['webDetection']['pagesWithMatchingImages']:
+                    strPagesWithMatchingImages += image['url'] + ', '
+                strVisuallySimilarImages = ''
+                for image in data['responses'][0]['webDetection']['visuallySimilarImages']:
+                    strVisuallySimilarImages += image['url'] + ', '
+                bot.sendMessage(chat_id=chat_id, text='Adult? ' + data['responses'][0]['safeSearchAnnotation']['adult'] + '\n' +
+                                                      'Spoof? ' + data['responses'][0]['safeSearchAnnotation']['spoof'] + '\n' +
+                                                      'Medical? ' + data['responses'][0]['safeSearchAnnotation']['medical'] + '\n' +
+                                                      'Violence? ' + data['responses'][0]['safeSearchAnnotation']['violence'] + '\n' +
+                                                      'Label Annotations: ' + strTags.rstrip(', ') + '\n' +
+                                                      'Web Entities: ' + strWebEntities.rstrip(', ') + '\n' +
+                                                      'Full Matching Images: ' + strFullMatchingImages.rstrip(', ') + '\n' +
+                                                      'Partial Matching Images: ' + strPartialMatchingImages.rstrip(', ') + '\n' +
+                                                      'Pages With Matching Images: ' + strPagesWithMatchingImages.rstrip(', ') + '\n' +
+                                                      'Visually Similar Images: ' + strVisuallySimilarImages.rstrip(', '), disable_web_page_preview=True)
+            else:
+                bot.sendMessage(chat_id=chat_id, text=data['responses'][0]['error']['message'], disable_web_page_preview=True)
+        else:
+            bot.sendMessage(chat_id=chat_id, text=data['error']['message'], disable_web_page_preview=True)

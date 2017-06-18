@@ -130,6 +130,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                         (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
                         (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
                     total_sent += 1
+                    get.send_detect_porn_debugging(bot, chat_id, imagelink, keyConfig)
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = get.Google_Custom_Search(args)
