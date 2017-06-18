@@ -15,15 +15,17 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
     sendException = True
     while sendException and numberOfRetries > 0:
         try:
-            caption_text = requestText + ': ' + encodedImageLink if not IsTooLongForCaption(requestText + ':' + encodedImageLink) \
-                else encodedImageLink
-            IsUrlTooLongForCaption = IsTooLongForCaption(caption_text)
-            bot.sendDocument(chat_id=chat_id,
-                             document=encodedImageLink,
-                             filename=requestText.replace('.',''),
-                             caption=(caption_text if not IsUrlTooLongForCaption else ''))
-            if (IsUrlTooLongForCaption):
-                print encodedImageLink
+            caption_text = requestText + ': ' + encodedImageLink
+            if not IsTooLongForCaption(caption_text):
+                bot.sendDocument(chat_id=chat_id,
+                                 document=encodedImageLink,
+                                 filename=requestText.replace('.',''),
+                                 caption=caption_text)
+            else:
+                bot.sendDocument(chat_id=chat_id,
+                                 document=encodedImageLink,
+                                 filename=requestText.replace('.',''))
+                bot.sendMessage(chat_id=chat_id, text=caption_text)
             sendException = False
         except telegram.error.BadRequest:
             break
@@ -36,20 +38,22 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
 
 
 def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
+    encodedImageLink = imagelink.encode('utf-8')
     if imagelink[:4] == '.gif':
         return False
     numberOfRetries = 5
     sendException = True
     while sendException and numberOfRetries > 0:
         try:
-            caption_text = requestText.encode('utf-8') + ': ' + imagelink.encode('utf-8') if not IsTooLongForCaption(requestText + ':' + imagelink) \
-                else imagelink
-            IsUrlTooLongForCaption = IsTooLongForCaption(caption_text)
-            bot.sendPhoto(chat_id=chat_id,
-                          photo=imagelink.encode('utf-8'),
-                          caption=(caption_text if not IsUrlTooLongForCaption else '').encode('utf-8'))
-            if (IsUrlTooLongForCaption):
-                print imagelink
+            caption_text = requestText + ': ' + encodedImageLink
+            if not IsTooLongForCaption(caption_text):
+                bot.sendPhoto(chat_id=chat_id,
+                              photo=encodedImageLink,
+                              caption=caption_text)
+            else:
+                bot.sendPhoto(chat_id=chat_id,
+                              photo=encodedImageLink)
+                bot.sendMessage(chat_id=chat_id, text=caption_text)
             sendException = False
         except telegram.error.BadRequest:
             break
