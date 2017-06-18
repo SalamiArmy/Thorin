@@ -14,8 +14,8 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
     numberOfRetries = 5
     sendException = True
     while sendException and numberOfRetries > 0:
+        caption_text = requestText + ': ' + encodedImageLink
         try:
-            caption_text = requestText + ': ' + encodedImageLink
             if not IsTooLongForCaption(caption_text):
                 bot.sendDocument(chat_id=chat_id,
                                  document=encodedImageLink,
@@ -25,7 +25,6 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
                 bot.sendDocument(chat_id=chat_id,
                                  document=encodedImageLink,
                                  filename=requestText.replace('.',''))
-                bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
             sendException = False
         except telegram.error.BadRequest:
             break
@@ -34,6 +33,8 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
             numberOfRetries -= 1
             print(sys.exc_info()[0])
             sleep(10)
+        if IsTooLongForCaption(caption_text):
+            bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
     return numberOfRetries > 0
 
 
@@ -44,8 +45,8 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
     numberOfRetries = 5
     sendException = True
     while sendException and numberOfRetries > 0:
+        caption_text = requestText + ': ' + encodedImageLink
         try:
-            caption_text = requestText + ': ' + encodedImageLink
             if not IsTooLongForCaption(caption_text):
                 bot.sendPhoto(chat_id=chat_id,
                               photo=encodedImageLink,
@@ -53,7 +54,6 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
             else:
                 bot.sendPhoto(chat_id=chat_id,
                               photo=encodedImageLink)
-                bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
             sendException = False
         except telegram.error.BadRequest:
             break
@@ -63,4 +63,6 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
             sleep(10)
+        if IsTooLongForCaption(caption_text):
+            bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
     return not sendException and numberOfRetries > 0
