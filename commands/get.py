@@ -158,7 +158,7 @@ def Image_Tags(imagelink, keyConfig):
     if strAdult == 'POSSIBLE' or \
         strAdult == 'LIKELY' or \
         strAdult == 'VERY_LIKELY':
-        tags += strAdult.lower() + " porn, "
+        tags += strAdult.replace('_', ' ').lower() + " porn, "
     strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
     if strViolence == 'POSSIBLE' or \
         strViolence == 'LIKELY' or \
