@@ -162,7 +162,10 @@ def Image_Tags(imagelink, keyConfig):
                     if (tag['description'] + ', ') not in tags:
                         tags += tag['description'] + ', '
         else:
-            print(visionData['responses'][0]['error']['message'])
+            if visionData['responses'][0]['error']['message'][:10] == 'Image size' and visionData['responses'][0]['error']['message'][19:] == 'exceeding allowed max (4.00M).':
+                tags += 'nothing, image is too large ' + visionData['responses'][0]['error']['message'][11:18]
+            else:
+                print(visionData['responses'][0]['error']['message'])
     else:
         print(visionData['error']['message'])
     return tags.rstrip(', ')
