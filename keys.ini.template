@@ -41,9 +41,6 @@ API_KEY: (Your OpenWeatherMap Api Key from openweathermap.org here}
 API_user: {Your SightEngine User ID}
 API_secret: {Your SightEngine Api Secret Key}
 
-[Bing]
-AutoSuggestApiKey: {Your Bing AutoSuggest Api Key}
-
 [GoodReads]
 key: {Your GoodReads API key}
 secret: {Your GoodReads API secret}

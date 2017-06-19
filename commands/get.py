@@ -105,21 +105,6 @@ def ImageIsSmallEnough(imagelink):
             print("image_file or fd global not defined")
 
 def Image_Tags(imagelink, keyConfig):
-    vision_url = 'https://westeurope.api.cognitive.microsoft.com/vision/v1.0/tag'
-    headers = {'Content-Type': 'application/json',
-               'Ocp-Apim-Subscription-Key': keyConfig.get('Bing', 'VisionApiKey')}
-    requestPayload = '{"url":"' + imagelink + '"}'
-    result = urlfetch.fetch(
-        url=vision_url,
-        payload=requestPayload,
-        method=urlfetch.POST,
-        headers=headers)
-    data = json.loads(result.content)
-    tags = ''
-    if 'tags' in data:
-        for tagBookmark in data['tags']:
-            tags += tagBookmark['name'] + ', '
-
     strPayload = str({
         "requests":
             [
