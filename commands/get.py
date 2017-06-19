@@ -137,9 +137,6 @@ def Image_Tags(imagelink, keyConfig):
     visionData = json.loads(raw_data.content)
     if 'error' not in visionData:
         if 'error' not in visionData['responses'][0]:
-            for tag in visionData['responses'][0]['labelAnnotations']:
-                if (tag['description'] + ', ') not in tags:
-                    tags += tag['description'] + ', '
             strAdult = visionData['responses'][0]['safeSearchAnnotation']['adult']
             if strAdult == 'POSSIBLE' or \
                 strAdult == 'LIKELY' or \
@@ -160,6 +157,10 @@ def Image_Tags(imagelink, keyConfig):
                 strSpoof == 'LIKELY' or \
                 strSpoof == 'VERY_LIKELY':
                 tags = tags.rstrip(' ') + strSpoof.replace('VERY_LIKELY', '').lower() + ' a meme, '
+            if 'labelAnnotations' in visionData['responses'][0]:
+                for tag in visionData['responses'][0]['labelAnnotations']:
+                    if (tag['description'] + ', ') not in tags:
+                        tags += tag['description'] + ', '
         else:
             print(visionData['responses'][0]['error']['message'])
     else:
