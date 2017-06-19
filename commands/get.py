@@ -174,6 +174,10 @@ def Image_Tags(imagelink, keyConfig):
                 strSpoof == 'LIKELY' or \
                 strSpoof == 'VERY_LIKELY':
                 tags += strSpoof.replace('VERY_LIKELY', '').lower() + ' offensive slure, '
+        else:
+            print(data['responses'][0]['error']['message'])
+    else:
+        print(data['error']['message'])
     return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, number=1):
