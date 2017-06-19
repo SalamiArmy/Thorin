@@ -156,7 +156,8 @@ def Image_Tags(imagelink, keyConfig):
             if strSpoof == 'POSSIBLE' or \
                 strSpoof == 'LIKELY' or \
                 strSpoof == 'VERY_LIKELY':
-                tags += strSpoof.replace('VERY_LIKELY', '').lower() + ' a meme, '
+                strengthOfTag = strSpoof.replace('VERY_LIKELY', '').lower()
+                tags += 'a' + (' ' + strengthOfTag if strengthOfTag != '' else '') + ' meme, '
             if 'labelAnnotations' in visionData['responses'][0]:
                 for tag in visionData['responses'][0]['labelAnnotations']:
                     if (tag['description'] + ', ') not in tags:
