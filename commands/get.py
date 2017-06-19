@@ -158,7 +158,7 @@ def Image_Tags(imagelink, keyConfig):
             if strAdult == 'POSSIBLE' or \
                 strAdult == 'LIKELY' or \
                 strAdult == 'VERY_LIKELY':
-                tags = tags.rstrip(' ') + strAdult.replace('VERY_LIKELY', '').lower() + ' porn, '
+                tags = tags.rstrip(' ') + strAdult.replace('VERY_LIKELY', '').lower() + ' obscene adult content, '
             strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
             if strViolence == 'POSSIBLE' or \
                 strViolence == 'LIKELY' or \
@@ -168,12 +168,12 @@ def Image_Tags(imagelink, keyConfig):
             if strMedical == 'POSSIBLE' or \
                 strMedical == 'LIKELY' or \
                 strMedical == 'VERY_LIKELY':
-                tags = tags.rstrip(' ') + strMedical.replace('VERY_LIKELY', '').lower() + ' graphic medical content warning, '
+                tags = tags.rstrip(' ') + strMedical.replace('VERY_LIKELY', '').lower() + ' shocking medical content, '
             strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
             if strSpoof == 'POSSIBLE' or \
                 strSpoof == 'LIKELY' or \
                 strSpoof == 'VERY_LIKELY':
-                tags = tags.rstrip(' ') + strSpoof.replace('VERY_LIKELY', '').lower() + ' offensive slure, '
+                tags = tags.rstrip(' ') + strSpoof.replace('VERY_LIKELY', '').lower() + ' a meme, '
         else:
             print(visionData['responses'][0]['error']['message'])
     else:
