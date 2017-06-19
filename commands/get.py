@@ -154,26 +154,26 @@ def Image_Tags(imagelink, keyConfig):
             for tag in visionData['responses'][0]['labelAnnotations']:
                 if (tag['description'] + ', ') not in tags:
                     tags += tag['description'] + ', '
-    strAdult = visionData['responses'][0]['safeSearchAnnotation']['adult']
-    if strAdult == 'POSSIBLE' or \
-        strAdult == 'LIKELY' or \
-        strAdult == 'VERY_LIKELY':
-        tags += strAdult.replace('VERY_LIKELY', '').lower() + ' porn, '
-    strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
-    if strViolence == 'POSSIBLE' or \
-        strViolence == 'LIKELY' or \
-        strViolence == 'VERY_LIKELY':
-        tags += strViolence.replace('VERY_LIKELY', '').lower() + ' offensive violence, '
-    strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
-    if strMedical == 'POSSIBLE' or \
-        strMedical == 'LIKELY' or \
-        strMedical == 'VERY_LIKELY':
-        tags += strMedical.replace('VERY_LIKELY', '').lower() + ' graphic medical content warning, '
-    strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
-    if strSpoof == 'POSSIBLE' or \
-        strSpoof == 'LIKELY' or \
-        strSpoof == 'VERY_LIKELY':
-        tags += strSpoof.replace('VERY_LIKELY', '').lower() + ' offensive slure, '
+            strAdult = visionData['responses'][0]['safeSearchAnnotation']['adult']
+            if strAdult == 'POSSIBLE' or \
+                strAdult == 'LIKELY' or \
+                strAdult == 'VERY_LIKELY':
+                tags += strAdult.replace('VERY_LIKELY', '').lower() + ' porn, '
+            strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
+            if strViolence == 'POSSIBLE' or \
+                strViolence == 'LIKELY' or \
+                strViolence == 'VERY_LIKELY':
+                tags += strViolence.replace('VERY_LIKELY', '').lower() + ' offensive violence, '
+            strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
+            if strMedical == 'POSSIBLE' or \
+                strMedical == 'LIKELY' or \
+                strMedical == 'VERY_LIKELY':
+                tags += strMedical.replace('VERY_LIKELY', '').lower() + ' graphic medical content warning, '
+            strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
+            if strSpoof == 'POSSIBLE' or \
+                strSpoof == 'LIKELY' or \
+                strSpoof == 'VERY_LIKELY':
+                tags += strSpoof.replace('VERY_LIKELY', '').lower() + ' offensive slure, '
     return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, number=1):
