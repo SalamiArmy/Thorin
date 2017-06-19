@@ -105,6 +105,7 @@ def ImageIsSmallEnough(imagelink):
             print("image_file or fd global not defined")
 
 def Image_Tags(imagelink, keyConfig):
+    tags = ''
     strPayload = str({
         "requests":
             [
