@@ -129,11 +129,14 @@ def Image_Tags(imagelink, keyConfig):
                 }
             ]
     })
-    raw_data = urlfetch.fetch(
-        url='https://vision.googleapis.com/v1/images:annotate?key=' + keyConfig.get('Google', 'GCSE_APP_ID'),
-        payload=strPayload,
-        method='POST',
-        headers={'Content-type': 'application/json'})
+    try:
+        raw_data = urlfetch.fetch(
+            url='https://vision.googleapis.com/v1/images:annotate?key=' + keyConfig.get('Google', 'GCSE_APP_ID'),
+            payload=strPayload,
+            method='POST',
+            headers={'Content-type': 'application/json'})
+    except:
+        return 'nothing, I need to clean my glasses'
     visionData = json.loads(raw_data.content)
     if 'error' not in visionData:
         if 'error' not in visionData['responses'][0]:
