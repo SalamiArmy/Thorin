@@ -33,9 +33,10 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
             numberOfRetries -= 1
             print(sys.exc_info()[0])
             sleep(10)
-        if IsTooLongForCaption(caption_text):
-            bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
-    return numberOfRetries > 0
+    DidSend = not sendException and numberOfRetries > 0
+    if DidSend and IsTooLongForCaption(caption_text):
+        bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
+    return DidSend
 
 
 def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
@@ -63,6 +64,7 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
             sleep(10)
-        if IsTooLongForCaption(caption_text):
-            bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
-    return not sendException and numberOfRetries > 0
+    DidSend = not sendException and numberOfRetries > 0
+    if DidSend and IsTooLongForCaption(caption_text):
+        bot.sendMessage(chat_id=chat_id, text=caption_text, disable_web_page_preview=True)
+    return DidSend
