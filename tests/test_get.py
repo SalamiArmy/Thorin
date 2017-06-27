@@ -32,4 +32,4 @@ class TestGet(unittest.TestCase):
         bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
         chatId = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
 
-        get.run(bot, chatId, 'Admin', keyConfig, requestText, 1)
+        get.run(bot, chatId, 'Admin', keyConfig, requestText, 20)

@@ -192,6 +192,20 @@ class Login(webapp2.RequestHandler):
         self.response.write('A pin has been sent.')
         return self.response
 
+class get(webapp2.RequestHandler):
+    def post(self):
+        urlfetch.set_default_fetch_deadline(10)
+        args = self.request.get('args')
+        chat_id = self.request.get('chat_id')
+        data = self.request.get('data')
+        total_number_to_send = self.request.get('total_number_to_send')
+        requestText = self.request.get('requestText')
+        results_this_page = self.request.get('results_this_page')
+        total_results = self.request.get('total_results')
+        get.restful_search_results_walker(args, bot, chat_id, data, total_number_to_send, requestText, results_this_page, total_results, keyConfig)
+        self.response.write('A pin has been sent.')
+        return self.response
+
 app = webapp2.WSGIApplication([
     ('/me', MeHandler),
     ('/updates', GetUpdatesHandler),
@@ -200,5 +214,6 @@ app = webapp2.WSGIApplication([
     ('/allwatches', TriggerAllWatches),
     ('/clearallwatches', ClearAllWatches),
     ('/watchgifs', TriggerWatchGifs),
-    ('/login', Login)
+    ('/login', Login),
+    ('/get', get)
 ], debug=True)

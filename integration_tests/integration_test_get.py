@@ -34,6 +34,25 @@ class TestGet(unittest.TestCase):
         if self.responseString == '':
             raise Exception
 
+    def integration_test_restful_walking(self):
+        newRequestObject = main.WebhookHandler()
+        class Object(object):
+            pass
+        newRequestObject.request = Object()
+        newRequestObject.request.get = lambda x: 'args' if (x == 'args') else \
+                                                 'chat_id' if (x == 'chat_id') else \
+                                                 'gosh' if (x == 'command') else \
+                                                 'gosh' if (x == 'command') else \
+                                                 'gosh' if (x == 'command') else \
+                                                 'gosh' if (x == 'command') else \
+                                                 'gosh' if (x == 'command') else ''
+        newRequestObject.response = Object()
+        newRequestObject.response.write = lambda x: self.mockResponseWriter(x)
+        self.responseString = ''
+        newRequestObject.get()
+        if self.responseString == '':
+            raise Exception
+
     global responseString
 
     def mockResponseWriter(self, inputText):
