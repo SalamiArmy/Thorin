@@ -1,4 +1,5 @@
 # coding=utf-8
+import ConfigParser
 import json
 import string
 import urllib
@@ -228,8 +229,10 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                                      total_offset, total_sent)
     return total_offset, total_results, total_sent
 
-def restful_search_results_walker(args, chat_id, data, total_number_to_send, user, requestText, results_this_page, total_results, keyConfig,
+def restful_search_results_walker(args, chat_id, data, total_number_to_send, requestText, results_this_page, total_results,
                                   total_offset=0, total_sent=0):
+    keyConfig = ConfigParser.ConfigParser()
+    keyConfig.read(["keys.ini", "..\keys.ini"])
     bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
     if 'items' in data and total_results > 0:
         offset_this_page = 0
@@ -258,7 +261,6 @@ def restful_search_results_walker(args, chat_id, data, total_number_to_send, use
                 "requestText":requestText,
                 "results_this_page":results_this_page,
                 "total_offset":total_offset,
-                "keyConfig":str(keyConfig),
                 "total_results":total_results
             })
             urlfetch.fetch(keyConfig.get('BotAdministration', 'REST_URL') + '/get?', strPayload, 'POST')

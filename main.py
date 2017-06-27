@@ -206,7 +206,7 @@ class restful_walker(webapp2.RequestHandler):
         total_offset = self.request.get('total_offset')
         total_sent = self.request.get('total_sent')
         get.restful_search_results_walker(args, chat_id, data, total_number_to_send, requestText, results_this_page,
-                                          total_results, keyConfig, total_offset, total_sent)
+                                          total_results, total_offset, total_sent)
         self.response.write('A pin has been sent.')
         return self.response
 
