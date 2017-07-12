@@ -1,7 +1,6 @@
 # coding=utf-8
 import hashlib
 import string
-import urllib
 
 from google.appengine.ext import ndb
 
@@ -75,8 +74,8 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'safe': 'off',
             'q': requestText,
             'start': 1}
-    data = get.Google_Custom_Search(args)
-    if 'items' in data and len(data['items']) >= 5:
+    data, total_results, results_this_page = get.Google_Custom_Search(args)
+    if 'items' in data and total_results > 0:
         OldValue = getWatchValue(chat_id, requestText)
         imagelinks = data['items'][0]['link']
         for link in data['items'][:5]:
