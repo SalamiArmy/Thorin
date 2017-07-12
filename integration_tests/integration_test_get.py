@@ -1,7 +1,12 @@
 # coding=utf-8
+import ConfigParser
 import unittest
+
+import telegram
 from google.appengine.ext import ndb
 from google.appengine.ext import testbed
+from google.appengine.api import urlfetch
+from commands import get
 
 import main
 
@@ -15,6 +20,7 @@ class TestGet(unittest.TestCase):
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
         self.testbed.init_user_stub()
+        self.testbed.init_urlfetch_stub()
         # Clear ndb's in-context cache between tests.
         # This prevents data from leaking between tests.
         # Alternatively, you could disable caching by
@@ -33,6 +39,35 @@ class TestGet(unittest.TestCase):
         newRequestObject.get()
         if self.responseString == '':
             raise Exception
+
+    def integration_test_restful_walking(self):
+        requestText = 'old ass titties'
+        total_number_to_send = 11
+
+        keyConfig = ConfigParser.ConfigParser()
+        keyConfig.read(["keys.ini", "..\keys.ini"])
+        chat_id = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
+        args = {'cx': keyConfig.get('Google', 'GCSE_IMAGE_SE_ID1'),
+                'key': keyConfig.get('Google', 'GCSE_APP_ID'),
+                'searchType': 'image',
+                'safe': 'off',
+                'q': requestText,
+                'start': 1}
+        data, total_results, results_this_page = get.Google_Custom_Search(args)
+        if 'items' in data and total_results > 0:
+            strPayload = str({
+                "args":args,
+                "chat_id":chat_id ,
+                "data":data,
+                "total_number_to_send":total_number_to_send,
+                "requestText":requestText,
+                "results_this_page":results_this_page,
+                "total_offset":0,
+                "total_sent":0,
+                "keyConfig":str(keyConfig),
+                "total_results":total_results
+            })
+            urlfetch.fetch(keyConfig.get('BotAdministration', 'REST_URL') + '/get?', strPayload, 'POST')
 
     global responseString
 
