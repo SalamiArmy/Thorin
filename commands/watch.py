@@ -16,26 +16,24 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             'start': 1}
     data, total_results, results_this_page = get.Google_Custom_Search(args)
     if 'items' in data and results_this_page >= 0:
-        offset_this_page = 0
-        imagelink = data['items'][offset_this_page]['link']
-        offset_this_page += 1
-        if '?' in imagelink:
-            imagelink = imagelink[:imagelink.index('?')]
-        if not get.wasPreviouslySeenImage(chat_id, imagelink):
-            get.addPreviouslySeenImagesValue(chat_id, imagelink)
-            if user != 'Watcher':
-                bot.sendMessage(chat_id=chat_id, text='Now watching /' +
-                                                      get.CommandName + ' ' + requestText + '.')
-                retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user)
-            else:
+        if user != 'Watcher':
+            bot.sendMessage(chat_id=chat_id, text='Now watching /' + get.CommandName + ' ' + requestText + '.')
+            total_offset, total_results, total_sent = get.search_results_walker(args, bot, chat_id, data, 1,
+                                                                                user + ', ' + requestText,
+                                                                                results_this_page, total_results,
+                                                                                keyConfig)
+            if int(total_sent) == 0:
+                bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
+                                                      ', I\'m afraid I can\'t find any images for ' +
+                                                      string.capwords(requestText.encode('utf-8')))
+        else:
+            total_offset, total_results, total_sent = get.search_results_walker(args, bot, chat_id, data, 1,
+                                                                                user + ', ' + requestText,
+                                                                                results_this_page, total_results,
+                                                                                keyConfig)
+            if int(total_sent) == 1:
                 bot.sendMessage(chat_id=chat_id, text='Watched /' +
                                                       get.CommandName + ' ' + requestText + ' changed.')
-                retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user)
-        else:
-            if user != 'Watcher':
-                bot.sendMessage(chat_id=chat_id, text=user + ', watch for /' +
-                                                      get.CommandName + ' ' + requestText + ' has not changed.')
-                retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user)
         if not main.AllWatchesContains(get.CommandName, chat_id, requestText):
             main.addToAllWatches(get.CommandName, chat_id, requestText)
     else:

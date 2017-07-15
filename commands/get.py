@@ -228,39 +228,3 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
         return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                                      total_offset, total_sent)
     return total_offset, total_results, total_sent
-
-def restful_search_results_walker(args, chat_id, data, total_number_to_send, requestText, results_this_page, total_results,
-                                  total_offset=0, total_sent=0):
-    keyConfig = ConfigParser.ConfigParser()
-    keyConfig.read(["keys.ini", "..\keys.ini"])
-    bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
-    if 'items' in data and total_results > 0:
-        offset_this_page = 0
-        while int(total_sent) < int(total_number_to_send) and int(offset_this_page) < int(results_this_page):
-            imagelink = data['items'][offset_this_page]['link']
-            offset_this_page += 1
-            total_offset += 1
-            if '?' in imagelink:
-                imagelink = imagelink[:imagelink.index('?')]
-            if not wasPreviouslySeenImage(chat_id, imagelink):
-                addPreviouslySeenImagesValue(chat_id, imagelink)
-                if is_valid_image(imagelink):
-                    ImageTags = Image_Tags(imagelink, keyConfig)
-                    if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
-                            (' ' + str(total_sent + 1) + ' of ' + str(total_number_to_send) if int(total_number_to_send) > 1 else '') +
-                            (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
-                        total_sent += 1
-        if int(total_sent) < int(total_number_to_send) and int(total_offset) < int(total_results):
-            args['start'] = total_offset + 1
-            data, total_results, results_this_page = Google_Custom_Search(args)
-            strPayload = str({
-                "args":str(args),
-                "chat_id":chat_id ,
-                "data":data,
-                "total_number_to_send":total_number_to_send,
-                "requestText":requestText,
-                "results_this_page":results_this_page,
-                "total_offset":total_offset,
-                "total_results":total_results
-            })
-            urlfetch.fetch(keyConfig.get('BotAdministration', 'REST_URL') + '/get?', strPayload, 'POST')
