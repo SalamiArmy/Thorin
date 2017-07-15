@@ -19,7 +19,7 @@ CommandName = 'get'
 
 class SeenImages(ndb.Model):
     # key name: get:str(chat_id)
-    allPreviousSeenImages = ndb.StringProperty(indexed=False, default='')
+    allPreviousSeenImages = ndb.TextProperty(indexed=False, default='')
 
 
 # ================================

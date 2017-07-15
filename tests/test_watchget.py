@@ -34,3 +34,4 @@ class TestGet(unittest.TestCase):
         chatId = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
 
         watch.run(bot, chatId, 'SalamiArmy', keyConfig, requestText)
+        watch.run(bot, chatId, 'SalamiArmy', keyConfig, requestText)

@@ -17,12 +17,14 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
     data, total_results, results_this_page = get.Google_Custom_Search(args)
     if 'items' in data and results_this_page >= 0:
         if user != 'Watcher':
-            bot.sendMessage(chat_id=chat_id, text='Now watching /' + get.CommandName + ' ' + requestText + '.')
             total_offset, total_results, total_sent = get.search_results_walker(args, bot, chat_id, data, 1,
                                                                                 user + ', ' + requestText,
                                                                                 results_this_page, total_results,
                                                                                 keyConfig)
-            if int(total_sent) == 0:
+            if int(total_sent) > 0:
+                if not main.AllWatchesContains(get.CommandName, chat_id, requestText):
+                    bot.sendMessage(chat_id=chat_id, text='Now watching /' + get.CommandName + ' ' + requestText + '.')
+            else:
                 bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
                                                       ', I\'m afraid I can\'t find any images for ' +
                                                       string.capwords(requestText.encode('utf-8')))
@@ -31,7 +33,7 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
                                                                                 user + ', ' + requestText,
                                                                                 results_this_page, total_results,
                                                                                 keyConfig)
-            if int(total_sent) == 1:
+            if int(total_sent) > 0:
                 bot.sendMessage(chat_id=chat_id, text='Watched /' +
                                                       get.CommandName + ' ' + requestText + ' changed.')
         if not main.AllWatchesContains(get.CommandName, chat_id, requestText):
