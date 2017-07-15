@@ -24,6 +24,9 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
             if int(total_sent) > 0:
                 if not main.AllWatchesContains(get.CommandName, chat_id, requestText):
                     bot.sendMessage(chat_id=chat_id, text='Now watching /' + get.CommandName + ' ' + requestText + '.')
+                else:
+                    bot.sendMessage(chat_id=chat_id, text='Watched /' +
+                                                          get.CommandName + ' ' + requestText + ' changed.')
             else:
                 bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
                                                       ', I\'m afraid I can\'t find any images for ' +
