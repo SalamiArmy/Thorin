@@ -46,12 +46,12 @@ def getPreviouslySeenImagesValue(chat_id):
     return ''
 
 
-def wasPreviouslySeenImage(chat_id, gif_link):
+def wasPreviouslySeenImage(chat_id, image_link):
     allPreviousLinks = getPreviouslySeenImagesValue(chat_id)
-    if ',' + gif_link + ',' in allPreviousLinks or \
-            allPreviousLinks.startswith(gif_link + ',') or \
-            allPreviousLinks.endswith(',' + gif_link) or \
-                    allPreviousLinks == gif_link:
+    if ',' + image_link + ',' in allPreviousLinks or \
+            allPreviousLinks.startswith(image_link + ',') or \
+            allPreviousLinks.endswith(',' + image_link) or \
+                    allPreviousLinks == image_link:
         return True
     return False
 
