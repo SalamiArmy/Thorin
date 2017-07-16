@@ -54,8 +54,7 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
     else:
         if user != 'Watcher':
             bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
-                                                  ', I\'m afraid I can\'t watch ' +
-                                                  'because I did not find any results for /get ' +
+                                                  ', I\'m afraid I did not find any results for /get ' +
                                                   string.capwords(requestText.encode('utf-8')))
 
 def unwatch(bot, chat_id, message):
