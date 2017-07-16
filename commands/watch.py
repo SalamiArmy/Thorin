@@ -43,15 +43,14 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
                                                   get.CommandName + ' ' + requestText + ' has not changed.')
         if total_sent > 0 and total_sent < num_to_send and user != 'Watcher':
             bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
-                                                  ', I\'m afraid I can\'t watch ' +
-                                                  'because I did not find any more results for /get ' +
+                                                  ', I\'m afraid I can\'t find any more results for /get ' +
                                                   string.capwords(requestText.encode('utf-8')))
         if not main.AllWatchesContains(get.CommandName, chat_id, requestText):
             main.addToAllWatches(get.CommandName, chat_id, requestText)
     else:
         if user != 'Watcher':
             bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
-                                                  ', I\'m afraid I did not find any results for /get ' +
+                                                  ', I\'m afraid I can\'t find any results for /get ' +
                                                   string.capwords(requestText.encode('utf-8')))
 
 
