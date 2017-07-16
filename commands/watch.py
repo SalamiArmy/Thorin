@@ -28,19 +28,16 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
                 if get.is_valid_image(imagelink):
                     if user != 'Watcher':
                         if total_sent == 0 and not main.AllWatchesContains(get.CommandName, chat_id, requestText):
-                            bot.sendMessage(chat_id=chat_id, text='Now watching /' +
-                                                                  get.CommandName + ' ' + requestText + '.')
+                            watch_message = 'Now watching /' + get.CommandName + ' ' + requestText + '.'
                         else:
-                            bot.sendMessage(chat_id=chat_id,
-                                            text='Watched /' + get.CommandName + ' ' + requestText + ' changed' +
-                                                 (' (' + str(total_sent) + ' out of ' + str(num_to_send) + ')' if total_sent > 0 else '') + '.')
-                        if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user):
-                            total_sent += 1
+                            watch_message = 'Watched /' + get.CommandName + ' ' + requestText + ' changed' + \
+                        (' (' + str(total_sent) + ' out of ' + str(num_to_send) + ')' if total_sent > 0 else '') + '.'
+                        total_sent = send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText,
+                                                                   total_sent, user, watch_message)
                     else:
-                        bot.sendMessage(chat_id=chat_id, text='Watched /' +
-                                                              get.CommandName + ' ' + requestText + ' changed.')
-                        if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user):
-                            total_sent += 1
+                        total_sent = send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText,
+                                                                   total_sent, user, 'Watched /' + get.CommandName +
+                                                                   ' ' + requestText + ' changed.')
         if total_sent == 0 and user != 'Watcher':
             bot.sendMessage(chat_id=chat_id, text=user + ', watch for /' +
                                                   get.CommandName + ' ' + requestText + ' has not changed.')
@@ -56,6 +53,16 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
             bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
                                                   ', I\'m afraid I did not find any results for /get ' +
                                                   string.capwords(requestText.encode('utf-8')))
+
+
+def send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText, total_sent, user, watch_message):
+    bot.sendMessage(chat_id=chat_id, text=watch_message)
+    ImageTags = get.Image_Tags(imagelink, keyConfig)
+    if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user + ', ' + requestText +
+            (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+        total_sent += 1
+    return total_sent
+
 
 def unwatch(bot, chat_id, message):
     watches = main.getAllWatches()
