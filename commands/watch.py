@@ -20,13 +20,12 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
 def send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText, total_sent, user, watch_message):
     bot.sendMessage(chat_id=chat_id, text=watch_message)
     ImageTags = get.Image_Tags(imagelink, keyConfig)
-    if imagelink[:len('.gif')] == '.gif':
-        if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, user + ', ' + requestText +
-                (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+    image_caption = user + ', ' + requestText + (' (I see ' + ImageTags + ')' if ImageTags != '' else '')
+    if imagelink[-len('.gif'):] == '.gif':
+        if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, image_caption):
             total_sent += 1
     else:
-        if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user + ', ' + requestText +
-                (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+        if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, image_caption):
             total_sent += 1
     return total_sent
 
@@ -54,7 +53,7 @@ def single_page_watch(args, bot, chat_id, keyConfig, num_to_send, requestText, u
                 imagelink = imagelink[:imagelink.index('?')]
             if not get.wasPreviouslySeenImage(chat_id, imagelink):
                 get.addPreviouslySeenImagesValue(chat_id, imagelink)
-                if imagelink[:len('.gif')] == '.gif':
+                if imagelink[-len('.gif'):] == '.gif':
                     is_valid = getgif.is_valid_gif(imagelink)
                 else:
                     is_valid = get.is_valid_image(imagelink)
