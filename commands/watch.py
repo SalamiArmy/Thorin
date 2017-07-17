@@ -20,9 +20,14 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
 def send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText, total_sent, user, watch_message):
     bot.sendMessage(chat_id=chat_id, text=watch_message)
     ImageTags = get.Image_Tags(imagelink, keyConfig)
-    if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user + ', ' + requestText +
-            (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
-        total_sent += 1
+    if imagelink[:len('.gif')] == '.gif':
+        if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, user + ', ' + requestText +
+                (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+            total_sent += 1
+    else:
+        if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, user + ', ' + requestText +
+                (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+            total_sent += 1
     return total_sent
 
 
