@@ -13,42 +13,6 @@ from commands import get
 
 CommandName = 'getgif'
 
-class SeenGifs(ndb.Model):
-    # key name: getgif:str(chat_id)
-    allPreviousSeenGifs = ndb.StringProperty(indexed=False, default='')
-
-
-# ================================
-
-def setPreviouslySeenGifsValue(chat_id, NewValue):
-    es = SeenGifs.get_or_insert(CommandName + ':' + str(chat_id))
-    es.allPreviousSeenGifs = NewValue.encode('utf-8')
-    es.put()
-
-def addPreviouslySeenGifsValue(chat_id, NewValue):
-    es = SeenGifs.get_or_insert(CommandName + ':' + str(chat_id))
-    if es.allPreviousSeenGifs == '':
-        es.allPreviousSeenGifs = NewValue.encode('utf-8')
-    else:
-        es.allPreviousSeenGifs += ',' + NewValue.encode('utf-8')
-    es.put()
-
-def getPreviouslySeenGifsValue(chat_id):
-    es = SeenGifs.get_or_insert(CommandName + ':' + str(chat_id))
-    if es:
-        return es.allPreviousSeenGifs.encode('utf-8')
-    return ''
-
-def wasPreviouslySeenGif(chat_id, gif_link):
-    allPreviousLinks = getPreviouslySeenGifsValue(chat_id)
-    if ',' + gif_link + ',' in allPreviousLinks or \
-            allPreviousLinks.startswith(gif_link + ',') or  \
-            allPreviousLinks.endswith(',' + gif_link) or  \
-            allPreviousLinks == gif_link:
-        return True
-    return False
-
-
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
     requestText = message.replace(bot.name, "").strip()
     args = {'cx': keyConfig.get('Google', 'GCSE_GIF_SE_ID1'),
@@ -122,8 +86,8 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
         total_offset += 1
         if '?' in imagelink:
             imagelink = imagelink[:imagelink.index('?')]
-        if not wasPreviouslySeenGif(chat_id, imagelink):
-            addPreviouslySeenGifsValue(chat_id, imagelink)
+        if not get.wasPreviouslySeenImage(chat_id, imagelink):
+            get.addPreviouslySeenImagesValue(chat_id, imagelink)
             if is_valid_gif(imagelink):
                 ImageTags = get.Image_Tags(imagelink, keyConfig)
                 if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, requestText +
