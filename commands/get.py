@@ -217,11 +217,16 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
         if not wasPreviouslySeenImage(chat_id, imagelink):
             addPreviouslySeenImagesValue(chat_id, imagelink)
             if is_valid_image(imagelink):
-                ImageTags = Image_Tags(imagelink, keyConfig)
-                if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
-                        (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
-                        (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
-                    total_sent += 1
+                if number == 1:
+                    ImageTags = Image_Tags(imagelink, keyConfig)
+                    if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
+                            (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
+                            (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+                        total_sent += 1
+                else:
+                    if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
+                            (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '')):
+                        total_sent += 1
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = Google_Custom_Search(args)
