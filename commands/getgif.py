@@ -95,10 +95,11 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                             (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
                         total_sent += 1
                 else:
-                    import telebot
-                    tb = telebot.AsyncTeleBot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
                     message = requestText + ': ' + (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
-                    tb.send_message(chat_id=chat_id, text=message)
+                    #import telebot
+                    #tb = telebot.AsyncTeleBot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
+                    #tb.send_message(chat_id=chat_id, text=message)
+                    bot.sendMessage(chat_id=chat_id, text=message)
                     total_sent += 1
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
