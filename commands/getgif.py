@@ -1,6 +1,6 @@
 # coding=utf-8
 import string
-from threading import Thread, Lock
+from threading import Thread
 import urllib
 import io
 

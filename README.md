@@ -30,7 +30,6 @@ cd ~/bot
 (PATH TO GOOGLE APP ENGINE LAUNCHER INSTALL)appcfg.py -A {GOOGLE APP ENGINE PROJECT ID} update .
 ```
 
-Clone from https://github.com/SalamiArmy/TelegramSteamBotForGoogleAppEngine and copy all its commands from it's commands folder into the commands folder.
 In lib\SoundCloud\Client.py set enable_ssl = False (Unsupported by Google App Engine)
 oh ja, /launch command needs a module called "dateutil" clone from https://github.com/dateutil/dateutil and copy the folder "dateutil" into lib.
 
