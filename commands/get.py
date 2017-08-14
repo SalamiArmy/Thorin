@@ -182,6 +182,8 @@ def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_t
         total_offset, total_results, total_sent = search_results_walker(args, bot, chat_id, data, total_number_to_send,
                                                                         user + ', ' + requestText, results_this_page,
                                                                         total_results, keyConfig)
+        for thread in allThreads:
+            thread.join()
         if int(total_sent) < int(total_number_to_send):
             if int(total_number_to_send) > 1:
                 bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
