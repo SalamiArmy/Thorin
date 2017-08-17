@@ -1,5 +1,5 @@
 # coding=utf-8
-import ConfigParser
+from threading import Thread
 import json
 import string
 import urllib
@@ -190,6 +190,8 @@ def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_t
         total_offset, total_results, total_sent = search_results_walker(args, bot, chat_id, data, total_number_to_send,
                                                                         user + ', ' + requestText, results_this_page,
                                                                         total_results, keyConfig)
+        for thread in allThreads:
+            thread.join()
         if int(total_sent) < int(total_number_to_send):
             if int(total_number_to_send) > 1:
                 bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
@@ -212,7 +214,7 @@ def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_t
                                                   ', I\'m afraid I can\'t find any images for ' +
                                                   string.capwords(requestText.encode('utf-8')))
 
-
+allThreads = []
 def search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                           total_offset=0, total_sent=0):
     offset_this_page = 0
@@ -232,9 +234,11 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                             (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
                         total_sent += 1
                 else:
-                    if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
-                            (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '')):
-                        total_sent += 1
+                    message = requestText + ': ' + (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
+                    newThread = Thread(target=bot.sendMessage, args=(chat_id, message))
+                    newThread.start()
+                    allThreads.append(newThread)
+                    total_sent += 1
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = Google_Custom_Search(args)
