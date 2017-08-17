@@ -118,9 +118,6 @@ def Image_Tags(imagelink, keyConfig):
                                 "type": "WEB_DETECTION"
                             },
                             {
-                                "type": "LABEL_DETECTION"
-                            },
-                            {
                                 "type": "SAFE_SEARCH_DETECTION"
                             }
                         ],
@@ -146,10 +143,6 @@ def Image_Tags(imagelink, keyConfig):
     if 'error' not in visionData:
         if 'error' not in visionData['responses'][0]:
             webDetection = visionData['responses'][0]['webDetection']
-            if ('webEntities' in webDetection):
-                for entity in webDetection['webEntities']:
-                    if 'description' in entity:
-                        tags += entity['description'] + ', '
             strAdult = visionData['responses'][0]['safeSearchAnnotation']['adult']
             if strAdult == 'POSSIBLE' or \
                 strAdult == 'LIKELY' or \
@@ -171,10 +164,10 @@ def Image_Tags(imagelink, keyConfig):
                 strSpoof == 'VERY_LIKELY':
                 strengthOfTag = strSpoof.replace('VERY_LIKELY', '').lower()
                 tags += 'a' + (' ' + strengthOfTag if strengthOfTag != '' else '') + ' meme, '
-            if 'labelAnnotations' in visionData['responses'][0]:
-                for tag in visionData['responses'][0]['labelAnnotations']:
-                    if (tag['description'] + ', ') not in tags:
-                        tags += tag['description'] + ', '
+            if ('webEntities' in webDetection):
+                for entity in webDetection['webEntities']:
+                    if 'description' in entity:
+                        tags += entity['description'] + ', '
         else:
             if visionData['responses'][0]['error']['message'][:10] == 'Image size' and visionData['responses'][0]['error']['message'][19:] == 'exceeding allowed max (4.00M).':
                 tags += 'nothing, image is too large ' + visionData['responses'][0]['error']['message'][11:18]
