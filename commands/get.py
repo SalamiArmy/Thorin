@@ -115,6 +115,9 @@ def Image_Tags(imagelink, keyConfig):
                     "features":
                         [
                             {
+                                "type": "WEB_DETECTION"
+                            },
+                            {
                                 "type": "LABEL_DETECTION"
                             },
                             {
@@ -142,6 +145,11 @@ def Image_Tags(imagelink, keyConfig):
     visionData = json.loads(raw_data.content)
     if 'error' not in visionData:
         if 'error' not in visionData['responses'][0]:
+            webDetection = visionData['responses'][0]['webDetection']
+            if ('webEntities' in webDetection):
+                for entity in webDetection['webEntities']:
+                    if 'description' in entity:
+                        tags += entity['description'] + ', '
             strAdult = visionData['responses'][0]['safeSearchAnnotation']['adult']
             if strAdult == 'POSSIBLE' or \
                 strAdult == 'LIKELY' or \
