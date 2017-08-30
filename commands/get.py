@@ -8,7 +8,6 @@ import sys
 
 import io
 
-import telegram
 from google.appengine.ext import ndb
 from google.appengine.api import urlfetch
 
@@ -16,42 +15,40 @@ from commands import retry_on_telegram_error
 
 CommandName = 'get'
 
-
 class SeenImages(ndb.Model):
-    # key name: get:str(chat_id)
-    allPreviousSeenImages = ndb.TextProperty(indexed=False, default='')
-
+    # key name: ImageUrl
+    whoseSeenImage = ndb.StringProperty(indexed=False, default='')
 
 # ================================
 
 def setPreviouslySeenImagesValue(chat_id, NewValue):
-    es = SeenImages.get_or_insert(CommandName + ':' + str(chat_id))
-    es.allPreviousSeenImages = NewValue.encode('utf-8')
+    es = SeenImages.get_or_insert(NewValue)
+    es.whoseSeenImage = str(chat_id)
     es.put()
 
 
 def addPreviouslySeenImagesValue(chat_id, NewValue):
-    es = SeenImages.get_or_insert(CommandName + ':' + str(chat_id))
-    if es.allPreviousSeenImages == '':
-        es.allPreviousSeenImages = NewValue.encode('utf-8')
+    es = SeenImages.get_or_insert(NewValue)
+    if es.whoseSeenImage == '':
+        es.whoseSeenImage = str(chat_id)
     else:
-        es.allPreviousSeenImages += ',' + NewValue.encode('utf-8')
+        es.whoseSeenImage += ',' + str(chat_id)
     es.put()
 
 
-def getPreviouslySeenImagesValue(chat_id):
-    es = SeenImages.get_or_insert(CommandName + ':' + str(chat_id))
+def getWhoseSeenImagesValue(image_link):
+    es = SeenImages.get_or_insert(image_link)
     if es:
-        return es.allPreviousSeenImages.encode('utf-8')
+        return es.whoseSeenImage.encode('utf-8')
     return ''
 
 
 def wasPreviouslySeenImage(chat_id, image_link):
-    allPreviousLinks = getPreviouslySeenImagesValue(chat_id)
-    if ',' + image_link + ',' in allPreviousLinks or \
-            allPreviousLinks.startswith(image_link + ',') or \
-            allPreviousLinks.endswith(',' + image_link) or \
-                    allPreviousLinks == image_link:
+    allWhoveSeenImage = getWhoseSeenImagesValue(image_link)
+    if ',' + chat_id + ',' in allWhoveSeenImage or \
+            allWhoveSeenImage.startswith(chat_id + ',') or \
+            allWhoveSeenImage.endswith(',' + chat_id) or \
+                    allWhoveSeenImage == chat_id:
         return True
     return False
 
