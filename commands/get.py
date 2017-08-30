@@ -15,20 +15,20 @@ from commands import retry_on_telegram_error
 
 CommandName = 'get'
 
-class SeenImages(ndb.Model):
+class WhosSeenImageUrls(ndb.Model):
     # key name: ImageUrl
     whoseSeenImage = ndb.StringProperty(indexed=False, default='')
 
 # ================================
 
 def setPreviouslySeenImagesValue(chat_id, NewValue):
-    es = SeenImages.get_or_insert(NewValue)
+    es = WhosSeenImageUrls.get_or_insert(NewValue)
     es.whoseSeenImage = str(chat_id)
     es.put()
 
 
 def addPreviouslySeenImagesValue(chat_id, NewValue):
-    es = SeenImages.get_or_insert(NewValue)
+    es = WhosSeenImageUrls.get_or_insert(NewValue)
     if es.whoseSeenImage == '':
         es.whoseSeenImage = str(chat_id)
     else:
@@ -37,7 +37,7 @@ def addPreviouslySeenImagesValue(chat_id, NewValue):
 
 
 def getWhoseSeenImagesValue(image_link):
-    es = SeenImages.get_or_insert(image_link)
+    es = WhosSeenImageUrls.get_or_insert(image_link)
     if es:
         return es.whoseSeenImage.encode('utf-8')
     return ''
