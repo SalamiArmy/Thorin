@@ -45,10 +45,10 @@ def getWhoseSeenImagesValue(image_link):
 
 def wasPreviouslySeenImage(chat_id, image_link):
     allWhoveSeenImage = getWhoseSeenImagesValue(image_link)
-    if ',' + chat_id + ',' in allWhoveSeenImage or \
-            allWhoveSeenImage.startswith(chat_id + ',') or \
-            allWhoveSeenImage.endswith(',' + chat_id) or \
-                    allWhoveSeenImage == chat_id:
+    if ',' + str(chat_id) + ',' in allWhoveSeenImage or \
+            allWhoveSeenImage.startswith(str(chat_id) + ',') or \
+            allWhoveSeenImage.endswith(',' + str(chat_id)) or \
+                    allWhoveSeenImage == str(chat_id):
         return True
     return False
 
