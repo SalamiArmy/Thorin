@@ -145,22 +145,25 @@ def Image_Tags(imagelink, keyConfig):
                 strAdult == 'LIKELY' or \
                 strAdult == 'VERY_LIKELY':
                 tags += strAdult.replace('VERY_LIKELY', '').lower() + ' obscene adult content, '
-            strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
-            if strViolence == 'POSSIBLE' or \
-                strViolence == 'LIKELY' or \
-                strViolence == 'VERY_LIKELY':
-                tags += strViolence.replace('VERY_LIKELY', '').lower() + ' offensive violence, '
-            strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
-            if strMedical == 'POSSIBLE' or \
-                strMedical == 'LIKELY' or \
-                strMedical == 'VERY_LIKELY':
-                tags += strMedical.replace('VERY_LIKELY', '').lower() + ' shocking medical content, '
-            strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
-            if strSpoof == 'POSSIBLE' or \
-                strSpoof == 'LIKELY' or \
-                strSpoof == 'VERY_LIKELY':
-                strengthOfTag = strSpoof.replace('VERY_LIKELY', '').lower()
-                tags += 'a' + (' ' + strengthOfTag if strengthOfTag != '' else '') + ' meme, '
+            else:
+                strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
+                if strViolence == 'POSSIBLE' or \
+                    strViolence == 'LIKELY' or \
+                    strViolence == 'VERY_LIKELY':
+                    tags += strViolence.replace('VERY_LIKELY', '').lower() + ' offensive violence, '
+                else:
+                    strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
+                    if strMedical == 'POSSIBLE' or \
+                        strMedical == 'LIKELY' or \
+                        strMedical == 'VERY_LIKELY':
+                        tags += strMedical.replace('VERY_LIKELY', '').lower() + ' shocking medical content, '
+                    else:
+                        strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
+                        if strSpoof == 'POSSIBLE' or \
+                            strSpoof == 'LIKELY' or \
+                            strSpoof == 'VERY_LIKELY':
+                            strengthOfTag = strSpoof.replace('VERY_LIKELY', '').lower()
+                            tags += 'a' + (' ' + strengthOfTag if strengthOfTag != '' else '') + ' meme, '
             if ('webEntities' in webDetection):
                 for entity in webDetection['webEntities']:
                     if 'description' in entity:
