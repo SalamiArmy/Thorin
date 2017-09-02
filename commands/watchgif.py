@@ -12,7 +12,7 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
             'q': requestText,
             'fileType': 'gif',
             'start': 1}
-    watch.single_page_watch(args, bot, chat_id, keyConfig, num_to_send, requestText, user, getgif)
+    watch.single_page_watch(args, bot, chat_id, keyConfig, requestText, user, getgif)
 
 
 def unwatch(bot, chat_id, message):
