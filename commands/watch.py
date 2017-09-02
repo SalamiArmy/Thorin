@@ -14,7 +14,7 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
             'safe': 'off',
             'q': requestText,
             'start': 1}
-    single_page_watch(args, bot, chat_id, keyConfig, num_to_send, requestText, user, get)
+    single_page_watch(args, bot, chat_id, keyConfig, requestText, user, get)
 
 
 def send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText, total_sent, user, watch_message):
@@ -41,12 +41,12 @@ def unwatch(bot, chat_id, message):
     else:
         bot.sendMessage(chat_id=chat_id, text='Watch for /' + get.CommandName + ' ' + message + ' not found.')
 
-def single_page_watch(args, bot, chat_id, keyConfig, num_to_send, requestText, user, watched_command):
+def single_page_watch(args, bot, chat_id, keyConfig, requestText, user, watched_command):
     data, total_results, results_this_page = get.Google_Custom_Search(args)
     if 'items' in data and results_this_page >= 0:
         offset_this_page = 0
         total_sent = 0
-        while offset_this_page < results_this_page and total_sent < num_to_send:
+        while offset_this_page < results_this_page:
             imagelink = data['items'][offset_this_page]['link']
             offset_this_page += 1
             if '?' in imagelink:
@@ -63,9 +63,7 @@ def single_page_watch(args, bot, chat_id, keyConfig, num_to_send, requestText, u
                                                                            requestText):
                             watch_message = 'Now watching /' + watched_command.CommandName + ' ' + requestText + '.'
                         else:
-                            watch_message = 'Watched /' + watched_command.CommandName + ' ' + requestText + ' changed' + \
-                                            (' (' + str(total_sent) + ' out of ' + str(
-                                                num_to_send) + ')' if total_sent > 0 else '') + '.'
+                            watch_message = 'Watched /' + watched_command.CommandName + ' ' + requestText + ' changed' + '.'
                         total_sent = send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText,
                                                                    total_sent, user, watch_message)
                     else:
@@ -73,14 +71,15 @@ def single_page_watch(args, bot, chat_id, keyConfig, num_to_send, requestText, u
                                                                    total_sent, user,
                                                                    'Watched /' + watched_command.CommandName +
                                                                    ' ' + requestText + ' changed.')
-        if total_sent == 0 and user != 'Watcher':
-            bot.sendMessage(chat_id=chat_id, text=user + ', watch for /' +
-                                                  watched_command.CommandName + ' ' + requestText + ' has not changed.')
-        if total_sent > 0 and total_sent < num_to_send and user != 'Watcher':
-            bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
-                                                  ', I\'m afraid I can\'t find any more results for /' +
-                                                  watched_command.CommandName + ' ' +
-                                                  string.capwords(requestText.encode('utf-8')))
+        if total_sent == 0:
+            if user != 'Watcher':
+                bot.sendMessage(chat_id=chat_id, text=user + ', watch for /' +
+                                                      watched_command.CommandName + ' ' + requestText + ' has not changed.')
+            else:
+                bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
+                                                      ', I\'m afraid I can\'t find any results for /' +
+                                                      watched_command.CommandName + ' ' +
+                                                      string.capwords(requestText.encode('utf-8')))
         if not main.AllWatchesContains(watched_command.CommandName, chat_id, requestText):
             main.addToAllWatches(watched_command.CommandName, chat_id, requestText)
     else:
