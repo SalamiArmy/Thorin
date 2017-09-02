@@ -32,14 +32,14 @@ def send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestTex
 
 def unwatch(bot, chat_id, message):
     watches = main.getAllWatches()
-    if ',' + str(chat_id) + ':' + get.CommandName + ':' + message + ',' in watches or \
-            watches.startswith(str(chat_id) + ':' + get.CommandName + ':' + message + ',') or \
-            watches.endswith(',' + str(chat_id) + ':' + get.CommandName + ':' + message) or \
-                    watches == str(chat_id) + ':' + get.CommandName + ':' + message:
-        main.removeFromAllWatches(str(chat_id) + ':' + get.CommandName + ':' + message)
-        bot.sendMessage(chat_id=chat_id, text='Watch for /' + get.CommandName + ' ' + message + ' has been removed.')
+    if ',' + str(chat_id) + ':get:' + message + ',' in watches or \
+            watches.startswith(str(chat_id) + ':get:' + message + ',') or \
+            watches.endswith(',' + str(chat_id) + ':get:' + message) or \
+                    watches == str(chat_id) + ':get:' + message:
+        main.removeFromAllWatches(str(chat_id) + ':get:' + message)
+        bot.sendMessage(chat_id=chat_id, text='Watch for /get ' + message + ' has been removed.')
     else:
-        bot.sendMessage(chat_id=chat_id, text='Watch for /' + get.CommandName + ' ' + message + ' not found.')
+        bot.sendMessage(chat_id=chat_id, text='Watch for /get ' + message + ' not found.')
 
 def single_page_watch(args, bot, chat_id, keyConfig, requestText, user, watched_command):
     data, total_results, results_this_page = get.Google_Custom_Search(args)

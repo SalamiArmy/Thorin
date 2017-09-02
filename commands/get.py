@@ -8,7 +8,6 @@ import sys
 
 import io
 
-import telegram
 from google.appengine.ext import ndb
 from google.appengine.api import urlfetch
 
@@ -16,42 +15,40 @@ from commands import retry_on_telegram_error
 
 CommandName = 'get'
 
-
-class SeenImages(ndb.Model):
-    # key name: get:str(chat_id)
-    allPreviousSeenImages = ndb.TextProperty(indexed=False, default='')
-
+class WhosSeenImageUrls(ndb.Model):
+    # key name: ImageUrl
+    whoseSeenImage = ndb.StringProperty(indexed=False, default='')
 
 # ================================
 
 def setPreviouslySeenImagesValue(chat_id, NewValue):
-    es = SeenImages.get_or_insert(CommandName + ':' + str(chat_id))
-    es.allPreviousSeenImages = NewValue.encode('utf-8')
+    es = WhosSeenImageUrls.get_or_insert(NewValue)
+    es.whoseSeenImage = str(chat_id)
     es.put()
 
 
 def addPreviouslySeenImagesValue(chat_id, NewValue):
-    es = SeenImages.get_or_insert(CommandName + ':' + str(chat_id))
-    if es.allPreviousSeenImages == '':
-        es.allPreviousSeenImages = NewValue.encode('utf-8')
+    es = WhosSeenImageUrls.get_or_insert(NewValue)
+    if es.whoseSeenImage == '':
+        es.whoseSeenImage = str(chat_id)
     else:
-        es.allPreviousSeenImages += ',' + NewValue.encode('utf-8')
+        es.whoseSeenImage += ',' + str(chat_id)
     es.put()
 
 
-def getPreviouslySeenImagesValue(chat_id):
-    es = SeenImages.get_or_insert(CommandName + ':' + str(chat_id))
+def getWhoseSeenImagesValue(image_link):
+    es = WhosSeenImageUrls.get_or_insert(image_link)
     if es:
-        return es.allPreviousSeenImages.encode('utf-8')
+        return es.whoseSeenImage.encode('utf-8')
     return ''
 
 
 def wasPreviouslySeenImage(chat_id, image_link):
-    allPreviousLinks = getPreviouslySeenImagesValue(chat_id)
-    if ',' + image_link + ',' in allPreviousLinks or \
-            allPreviousLinks.startswith(image_link + ',') or \
-            allPreviousLinks.endswith(',' + image_link) or \
-                    allPreviousLinks == image_link:
+    allWhoveSeenImage = getWhoseSeenImagesValue(image_link)
+    if ',' + str(chat_id) + ',' in allWhoveSeenImage or \
+            allWhoveSeenImage.startswith(str(chat_id) + ',') or \
+            allWhoveSeenImage.endswith(',' + str(chat_id)) or \
+                    allWhoveSeenImage == str(chat_id):
         return True
     return False
 
@@ -148,22 +145,25 @@ def Image_Tags(imagelink, keyConfig):
                 strAdult == 'LIKELY' or \
                 strAdult == 'VERY_LIKELY':
                 tags += strAdult.replace('VERY_LIKELY', '').lower() + ' obscene adult content, '
-            strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
-            if strViolence == 'POSSIBLE' or \
-                strViolence == 'LIKELY' or \
-                strViolence == 'VERY_LIKELY':
-                tags += strViolence.replace('VERY_LIKELY', '').lower() + ' offensive violence, '
-            strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
-            if strMedical == 'POSSIBLE' or \
-                strMedical == 'LIKELY' or \
-                strMedical == 'VERY_LIKELY':
-                tags += strMedical.replace('VERY_LIKELY', '').lower() + ' shocking medical content, '
-            strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
-            if strSpoof == 'POSSIBLE' or \
-                strSpoof == 'LIKELY' or \
-                strSpoof == 'VERY_LIKELY':
-                strengthOfTag = strSpoof.replace('VERY_LIKELY', '').lower()
-                tags += 'a' + (' ' + strengthOfTag if strengthOfTag != '' else '') + ' meme, '
+            else:
+                strViolence = visionData['responses'][0]['safeSearchAnnotation']['violence']
+                if strViolence == 'POSSIBLE' or \
+                    strViolence == 'LIKELY' or \
+                    strViolence == 'VERY_LIKELY':
+                    tags += strViolence.replace('VERY_LIKELY', '').lower() + ' offensive violence, '
+                else:
+                    strMedical = visionData['responses'][0]['safeSearchAnnotation']['medical']
+                    if strMedical == 'POSSIBLE' or \
+                        strMedical == 'LIKELY' or \
+                        strMedical == 'VERY_LIKELY':
+                        tags += strMedical.replace('VERY_LIKELY', '').lower() + ' shocking medical content, '
+                    else:
+                        strSpoof = visionData['responses'][0]['safeSearchAnnotation']['spoof']
+                        if strSpoof == 'POSSIBLE' or \
+                            strSpoof == 'LIKELY' or \
+                            strSpoof == 'VERY_LIKELY':
+                            strengthOfTag = strSpoof.replace('VERY_LIKELY', '').lower()
+                            tags += 'a' + (' ' + strengthOfTag if strengthOfTag != '' else '') + ' meme, '
             if ('webEntities' in webDetection):
                 for entity in webDetection['webEntities']:
                     if 'description' in entity:

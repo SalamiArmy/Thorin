@@ -1,6 +1,7 @@
 # coding=utf-8
 import sys
 from time import sleep
+from google.appengine.api import urlfetch
 
 import telegram
 
@@ -27,6 +28,8 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
                                  filename=requestText.replace('.',''))
             sendException = False
         except telegram.error.BadRequest:
+            break
+        except urlfetch.DeadlineExceededError:
             break
         except:
             sendException = True
@@ -57,6 +60,8 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
                               photo=encodedImageLink)
             sendException = False
         except telegram.error.BadRequest:
+            break
+        except urlfetch.DeadlineExceededError:
             break
         except:
             sendException = True
