@@ -75,11 +75,6 @@ def single_page_watch(args, bot, chat_id, keyConfig, requestText, user, watched_
             if user != 'Watcher':
                 bot.sendMessage(chat_id=chat_id, text=user + ', watch for /' +
                                                       watched_command.CommandName + ' ' + requestText + ' has not changed.')
-            else:
-                bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
-                                                      ', I\'m afraid I can\'t find any results for /' +
-                                                      watched_command.CommandName + ' ' +
-                                                      string.capwords(requestText.encode('utf-8')))
         if not main.AllWatchesContains(watched_command.CommandName, chat_id, requestText):
             main.addToAllWatches(watched_command.CommandName, chat_id, requestText)
     else:
