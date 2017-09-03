@@ -1,4 +1,4 @@
 cron:
 - description: all watches job
   url: /allwatches
-  schedule: every 6 hours
+  schedule: every day 12:00
