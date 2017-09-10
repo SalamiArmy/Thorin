@@ -167,7 +167,7 @@ def Image_Tags(imagelink, keyConfig):
             if ('webEntities' in webDetection):
                 for entity in webDetection['webEntities']:
                     if 'description' in entity:
-                        tags += entity['description'] + ', '
+                        tags += entity['description'].encode('utf-8') + ', '
         else:
             if visionData['responses'][0]['error']['message'][:10] == 'Image size' and visionData['responses'][0]['error']['message'][19:] == 'exceeding allowed max (4.00M).':
                 tags += 'doesn\'t look like anything to me, image is too large ' + visionData['responses'][0]['error']['message'][11:18]
@@ -175,7 +175,7 @@ def Image_Tags(imagelink, keyConfig):
                 print(visionData['responses'][0]['error']['message'])
     else:
         print(visionData['error']['message'])
-    return 'I see ' + tags.rstrip(', ')
+    return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_to_send=1):
     data, total_results, results_this_page = Google_Custom_Search(args)

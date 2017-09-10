@@ -1,3 +1,4 @@
+# coding=utf-8
 import ConfigParser
 import unittest
 import telegram
@@ -17,6 +18,7 @@ class TestGetHuge(unittest.TestCase):
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
         self.testbed.init_user_stub()
+        self.testbed.init_urlfetch_stub()
         # Clear ndb's in-context cache between tests.
         # This prevents data from leaking between tests.
         # Alternatively, you could disable caching by
@@ -24,11 +26,11 @@ class TestGetHuge(unittest.TestCase):
         ndb.get_context().clear_cache()
 
     def test_gethuge(self):
-        requestText = 'Mr. Burgundy, you have a massive erection t-shirt'
+        requestText = u'Astrid Bergès-Frisbey'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
         bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
         chatId = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
 
-        gethuge.run(bot, chatId, 'Admin', keyConfig, requestText, 8)
+        gethuge.run(bot, chatId, 'Admin', keyConfig, requestText, 1)
