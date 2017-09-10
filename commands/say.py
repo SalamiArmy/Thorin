@@ -7,7 +7,8 @@ from google.appengine.api import urlfetch
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
     voices = ['en-GB_KateVoice',
               'en-US_LisaVoice',
-              'en-US_MichaelVoice']
+              'en-US_MichaelVoice',
+              'es-ES_EnriqueVoice']
     sent = False
     for voice in voices:
         data = get_voice(message, keyConfig, voice)
@@ -25,7 +26,7 @@ def get_voice(text, keyConfig, voice):
     IBMpassword = keyConfig.get('IBM', 'password')
     args = urllib.urlencode({'text': text.encode('utf-8'),
                              'voice': voice,
-                             'caption': voice.replace('en-GB_', '').replace('en-US_', '').replace('Voice', '')})
+                             'caption': voice})
     return urlfetch.fetch('https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + args,
                           headers={'Authorization':'Basic %s' %
                                                    base64.b64encode(IBMusername + ':' + IBMpassword)}).content
