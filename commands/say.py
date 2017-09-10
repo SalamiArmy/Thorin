@@ -8,7 +8,8 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
     voices = ['en-GB_KateVoice',
               'en-US_LisaVoice',
               'en-US_MichaelVoice',
-              'es-ES_EnriqueVoice']
+              'es-ES_EnriqueVoice',
+              'de-DE_BirgitVoice']
     sent = False
     for voice in voices:
         data = get_voice(message, keyConfig, voice)
