@@ -44,3 +44,7 @@ API_secret: {Your SightEngine Api Secret Key}
 [GoodReads]
 key: {Your GoodReads API key}
 secret: {Your GoodReads API secret}
+
+[IBM]
+username: {Your IBM BlueBlox username}
+password: {Your IBM BlueBlox password}
