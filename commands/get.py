@@ -104,7 +104,7 @@ def ImageIsSmallEnough(imagelink):
             print("image_file or fd global not defined")
 
 def Image_Tags(imagelink, keyConfig):
-    tags = ''
+    tags = 'I see '
     strPayload = str({
         "requests":
             [
@@ -224,7 +224,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                     ImageTags = Image_Tags(imagelink, keyConfig)
                     if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
                             (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
-                            (' (I see ' + ImageTags + ')' if ImageTags != '' else '')):
+                            (' (' + ImageTags + ')' if ImageTags != '' else '')):
                         total_sent += 1
                 else:
                     message = requestText + ': ' + (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
