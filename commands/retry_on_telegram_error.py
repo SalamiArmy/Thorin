@@ -1,5 +1,6 @@
 # coding=utf-8
 import sys
+import urllib2
 from time import sleep
 from google.appengine.api import urlfetch
 
@@ -31,6 +32,10 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
             break
         except urlfetch.DeadlineExceededError:
             break
+        except urllib2.HTTPError:
+            break
+        except urllib2.URLError:
+            break
         except:
             sendException = True
             numberOfRetries -= 1
@@ -38,7 +43,7 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
             sleep(10)
     DidSend = not sendException and numberOfRetries > 0
     if DidSend and IsTooLongForCaption(caption_text):
-        bot.sendMessage(chat_id=chat_id, text=caption_text,disable_web_page_preview=True)
+        bot.sendMessage(chat_id=chat_id, text=caption_text, disable_web_page_preview=True)
     return DidSend
 
 
@@ -62,6 +67,10 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
         except telegram.error.BadRequest:
             break
         except urlfetch.DeadlineExceededError:
+            break
+        except urllib2.HTTPError:
+            break
+        except urllib2.URLError:
             break
         except:
             sendException = True
