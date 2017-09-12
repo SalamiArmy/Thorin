@@ -29,8 +29,8 @@ class TestGet(unittest.TestCase):
         # using ndb.get_context().set_cache_policy(False)
         ndb.get_context().clear_cache()
 
-    def test_getgif(self):
-        requestText = 'tonguing asshole'
+    def test_multi_getgif(self):
+        requestText = u'aaand dead.'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
@@ -38,3 +38,13 @@ class TestGet(unittest.TestCase):
         chatId = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
 
         getgif.run(bot, chatId, 'Admin', keyConfig, requestText, 5)
+
+    def test_getgif(self):
+        requestText = u'aaand dead.'
+
+        keyConfig = ConfigParser.ConfigParser()
+        keyConfig.read(["keys.ini", "..\keys.ini"])
+        bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
+        chatId = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
+
+        getgif.run(bot, chatId, 'Admin', keyConfig, requestText, 1)
