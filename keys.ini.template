@@ -46,5 +46,5 @@ key: {Your GoodReads API key}
 secret: {Your GoodReads API secret}
 
 [IBM]
-username: {Your IBM BlueBlox username}
-password: {Your IBM BlueBlox password}
+username: {Your IBM BlueMix username}
+password: {Your IBM BlueMix password}
