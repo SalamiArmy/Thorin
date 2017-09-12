@@ -5,8 +5,7 @@ import requests
 from google.appengine.api import urlfetch
 
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
-    voices = ['en-US_LisaVoice',
-              'en-US_AllisonVoice']
+    voices = ['en-US_LisaVoice']
     sent = False
     for voice in voices:
         data = get_voice(message, keyConfig, voice)
