@@ -175,7 +175,7 @@ def Image_Tags(imagelink, keyConfig):
                 print(visionData['responses'][0]['error']['message'])
     else:
         print(visionData['error']['message'])
-    if tags != '':
+    if tags != '' and tags != 'doesn\'t look like anything to me':
         tags = 'I see ' + tags
     return tags.rstrip(', ')
 
