@@ -5,7 +5,7 @@ import requests
 from google.appengine.api import urlfetch
 
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
-    if str(message).stripl(' ')[0] == '<':
+    if str(message).lstrip(' ')[0] == '<':
         voices = ['en-US_AllisonVoice']
     else:
         voices = ['en-US_LisaVoice']
