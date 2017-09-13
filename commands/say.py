@@ -5,13 +5,14 @@ import requests
 from google.appengine.api import urlfetch
 
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
-    if str(message).lstrip(' ')[0] == '<':
+    requestText = message.encode('utf-8')
+    if requestText.contains('<voice-transformation') or requestText.contains('<express-as'):
         voices = ['en-US_AllisonVoice']
     else:
         voices = ['en-US_LisaVoice']
     sent = False
     for voice in voices:
-        data = get_voice(message, keyConfig, voice)
+        data = get_voice(requestText, keyConfig, voice)
         if data:
             requests.post('https://api.telegram.org/bot' + keyConfig.get('Telegram', 'TELE_BOT_ID') +
                           '/sendVoice?chat_id='+str(chat_id),
@@ -24,7 +25,7 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
 def get_voice(text, keyConfig, voice):
     IBMusername = keyConfig.get('IBM', 'username')
     IBMpassword = keyConfig.get('IBM', 'password')
-    args = urllib.urlencode({'text': text.encode('utf-8'),
+    args = urllib.urlencode({'text': text,
                              'voice': voice,
                              'caption': voice})
     return urlfetch.fetch('https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + args,

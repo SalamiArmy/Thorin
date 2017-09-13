@@ -22,7 +22,7 @@ class TestSay(unittest.TestCase):
         ndb.get_context().clear_cache()
 
     def test_say(self):
-        requestText = u'It’s said that women and men are from two different planets when it comes to communication.'
+        requestText = u'<voice-transformation type="Young" strength="80%">It’s said that women and men are from two different planets when it comes to communication.</voice-transformation>'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
