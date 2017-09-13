@@ -16,7 +16,7 @@ def run(bot, chat_id, user, keyConfig, message, totalResults=1):
         if data:
             requests.post('https://api.telegram.org/bot' + keyConfig.get('Telegram', 'TELE_BOT_ID') +
                           '/sendVoice?chat_id='+str(chat_id),
-                          files={'voice': ('saying.ogg', data, 'audio/ogg', {'Expires': '0'})})
+                          files={'voice': ('no but what I\'M saying is.ogg', data, 'audio/ogg', {'Expires': '0'})})
             sent = True
     if not sent:
         bot.sendMessage(chat_id=str(chat_id), text='I\'m sorry ' + (user if not user == '' else 'Dave') +

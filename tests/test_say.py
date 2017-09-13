@@ -22,11 +22,11 @@ class TestSay(unittest.TestCase):
         ndb.get_context().clear_cache()
 
     def test_say(self):
-        requestText = u'<voice-transformation type="Young" strength="80%">It’s said that women and men are from two different planets when it comes to communication.</voice-transformation>'
+        requestText = u'<voice-transformation type="Young" strength="80%">Um. I\'m terribly sorry sire. But I\'d just like to ask you a quick thing really quick it\'ll just take a second. Um. Could you kindly go fuck yourself? With a camel dick if possible.</voice-transformation>'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
         bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
-        chatId = int(keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID'))
+        chatId = int(keyConfig.get('BotAdministration', 'TESTING_GROUP_CHAT_ID'))
 
-        say.run(bot, chatId, 'Admin', keyConfig, requestText, 1)
+        say.run(bot, chatId, 'SalamiArmy', keyConfig, requestText, 1)
