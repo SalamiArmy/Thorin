@@ -6,7 +6,7 @@ from google.appengine.api import urlfetch
 
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
     requestText = message.encode('utf-8')
-    if requestText.contains('<voice-transformation') or requestText.contains('<express-as'):
+    if '<voice-transformation' in requestText or '<express-as' in requestText:
         voices = ['en-US_AllisonVoice']
     else:
         voices = ['en-US_LisaVoice']
