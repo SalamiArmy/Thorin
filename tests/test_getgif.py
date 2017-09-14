@@ -40,7 +40,7 @@ class TestGet(unittest.TestCase):
         getgif.run(bot, chatId, 'Admin', keyConfig, requestText, 5)
 
     def test_getgif(self):
-        requestText = u'aaand dead.'
+        requestText = u'freestyle musical canine'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
@@ -48,3 +48,13 @@ class TestGet(unittest.TestCase):
         chatId = keyConfig.get('BotAdministration', 'TESTING_PRIVATE_CHAT_ID')
 
         getgif.run(bot, chatId, 'Admin', keyConfig, requestText, 1)
+
+    def test_getgif_group(self):
+        requestText = u'ascended straight to the highest layers of heaven'
+
+        keyConfig = ConfigParser.ConfigParser()
+        keyConfig.read(["keys.ini", "..\keys.ini"])
+        bot = telegram.Bot(keyConfig.get('Telegram', 'TELE_BOT_ID'))
+        chatId = keyConfig.get('BotAdministration', 'TESTING_GROUP_CHAT_ID')
+
+        getgif.run(bot, chatId, 'SalamiArmy', keyConfig, requestText, 1)
