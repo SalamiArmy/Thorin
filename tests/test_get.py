@@ -25,7 +25,7 @@ class TestGet(unittest.TestCase):
         ndb.get_context().clear_cache()
 
     def test_get(self):
-        requestText = u'weed is growing all over'
+        requestText = u'whip the cum to a froth'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])

@@ -54,6 +54,7 @@ def wasPreviouslySeenImage(chat_id, image_link):
 
 
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
+    print message
     requestText = str(message).replace(bot.name, "").strip()
     args = {'cx': keyConfig.get('Google', 'GCSE_IMAGE_SE_ID1'),
             'key': keyConfig.get('Google', 'GCSE_APP_ID'),
