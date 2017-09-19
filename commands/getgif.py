@@ -15,7 +15,6 @@ from commands import get
 CommandName = 'getgif'
 
 def run(bot, chat_id, user, keyConfig, message, totalResults=1):
-    print message
     requestText = str(message).replace(bot.name, "").strip()
     args = {'cx': keyConfig.get('Google', 'GCSE_GIF_SE_ID1'),
             'key': keyConfig.get('Google', 'GCSE_APP_ID'),
@@ -96,6 +95,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
             if is_valid_gif(imagelink):
                 if number == 1:
                     ImageTags = get.Image_Tags(imagelink, keyConfig)
+                    print 'sending ' + requestText + (' (' + ImageTags + ')' if ImageTags != '' else '')
                     if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, requestText +
                             (' (' + ImageTags + ')' if ImageTags != '' else '')):
                         total_sent += 1
