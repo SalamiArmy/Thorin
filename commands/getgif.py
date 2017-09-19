@@ -86,6 +86,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
     offset_this_page = 0
     while int(total_sent) < int(number) and int(offset_this_page) < int(results_this_page):
         imagelink = data['items'][offset_this_page]['link']
+        print 'got image link ' + imagelink
         offset_this_page += 1
         total_offset += 1
         if '?' in imagelink:
@@ -95,7 +96,6 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
             if is_valid_gif(imagelink):
                 if number == 1:
                     ImageTags = get.Image_Tags(imagelink, keyConfig)
-                    print 'sending ' + requestText + (' (' + ImageTags + ')' if ImageTags != '' else '')
                     if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, requestText +
                             (' (' + ImageTags + ')' if ImageTags != '' else '')):
                         total_sent += 1
