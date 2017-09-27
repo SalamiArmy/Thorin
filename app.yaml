@@ -11,17 +11,17 @@ handlers:
   login: admin
   script: main.app
 
+- url: /login
+  static_files: www/login.html
+  upload: www/login.html
+  secure: always
+
 - url: /.+
   script: main.app
   
 - url: /
   static_files: www/index.html
   upload: www/index.html
-  secure: always
-
-- url: /login
-  static_files: www/login.html
-  upload: www/login.html
   secure: always
 
 libraries:
