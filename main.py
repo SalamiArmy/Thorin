@@ -16,6 +16,9 @@ import webapp2
 
 from commands import login
 
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 BASE_URL = 'https://api.telegram.org/bot'
 
 # Read keys.ini file at program start (don't forget to put your keys in there!)

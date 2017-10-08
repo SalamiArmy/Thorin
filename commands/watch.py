@@ -7,7 +7,7 @@ from commands import getgif
 from commands import retry_on_telegram_error
 
 def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
-    requestText = message.replace(bot.name, "").strip()
+    requestText = str(message).replace(bot.name, "").strip()
     args = {'cx': keyConfig.get('Google', 'GCSE_IMAGE_SE_ID1'),
             'key': keyConfig.get('Google', 'GCSE_APP_ID'),
             'searchType': 'image',
@@ -18,6 +18,7 @@ def run(bot, chat_id, user, keyConfig, message, num_to_send=1):
 
 
 def send_image_with_watch_message(bot, chat_id, imagelink, keyConfig, requestText, total_sent, user, watch_message):
+    print 'sending watch message ' + watch_message
     bot.sendMessage(chat_id=chat_id, text=watch_message)
     ImageTags = get.Image_Tags(imagelink, keyConfig)
     image_caption = user + ', ' + requestText + (' (I see ' + ImageTags + ')' if ImageTags != '' else '')
