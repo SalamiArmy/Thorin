@@ -136,7 +136,7 @@ def Image_Tags(imagelink, keyConfig):
             method='POST',
             headers={'Content-type': 'application/json'})
     except:
-        return 'doesn\'t look like anything to me'
+        return ''
     visionData = json.loads(raw_data.content)
     if 'error' not in visionData:
         if 'error' not in visionData['responses'][0]:
@@ -176,8 +176,6 @@ def Image_Tags(imagelink, keyConfig):
                 print(visionData['responses'][0]['error']['message'])
     else:
         print(visionData['error']['message'])
-    if tags != '' and 'doesn\'t look like anything to me' not in tags:
-        tags = 'I see ' + tags
     return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_to_send=1):
@@ -186,8 +184,6 @@ def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_t
         total_offset, total_results, total_sent = search_results_walker(args, bot, chat_id, data, total_number_to_send,
                                                                         user + ', ' + requestText, results_this_page,
                                                                         total_results, keyConfig)
-        for thread in allThreads:
-            thread.join()
         if int(total_sent) < int(total_number_to_send):
             if int(total_number_to_send) > 1:
                 bot.sendMessage(chat_id=chat_id, text='I\'m sorry ' + (user if not user == '' else 'Dave') +
@@ -210,7 +206,6 @@ def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_t
                                                   ', I\'m afraid I can\'t find any images for ' +
                                                   string.capwords(requestText.encode('utf-8')))
 
-allThreads = []
 def search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                           total_offset=0, total_sent=0):
     offset_this_page = 0
@@ -224,16 +219,14 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
             addPreviouslySeenImagesValue(chat_id, imagelink)
             if is_valid_image(imagelink):
                 if number == 1:
-                    ImageTags = Image_Tags(imagelink, keyConfig)
                     if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
-                            (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '') +
-                            (' (' + ImageTags + ')' if ImageTags != '' else '')):
+                            (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '')):
                         total_sent += 1
+                    send_computer_vision_tags(bot, chat_id, imagelink, keyConfig, requestText)
                 else:
-                    message = requestText + ': ' + (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
-                    newThread = Thread(target=bot.sendMessage, args=(chat_id, message))
-                    newThread.start()
-                    allThreads.append(newThread)
+                    message = requestText + ': ' + \
+                              (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
+                    bot.sendMessage(chat_id, message)
                     total_sent += 1
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
@@ -241,3 +234,11 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
         return search_results_walker(args, bot, chat_id, data, number, requestText, results_this_page, total_results, keyConfig,
                                      total_offset, total_sent)
     return total_offset, total_results, total_sent
+
+def send_computer_vision_tags(bot, chat_id, imagelink, keyConfig, requestText):
+    imagelink_str = str(imagelink)
+    image_tags = Image_Tags(imagelink_str, keyConfig)
+    if image_tags != '':
+        bot.sendMessage(chat_id=chat_id, text=requestText + ' looks like: ' + image_tags +
+                                              '\n' + imagelink_str,
+                        disable_web_page_preview=True)

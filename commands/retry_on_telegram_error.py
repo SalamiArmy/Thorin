@@ -10,19 +10,17 @@ import telegram
 def IsTooLongForCaption(text):
     return len(text) > 200
 
-
 def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
     encodedImageLink = imagelink.encode('utf-8')
     numberOfRetries = 5
     sendException = True
     while sendException and numberOfRetries > 0:
-        caption_text = requestText + ': ' + encodedImageLink
         try:
-            if not IsTooLongForCaption(caption_text):
+            if not IsTooLongForCaption(requestText):
                 bot.sendDocument(chat_id=chat_id,
                                  document=encodedImageLink,
                                  filename=requestText.replace('.',''),
-                                 caption=caption_text)
+                                 caption=requestText)
             else:
                 bot.sendDocument(chat_id=chat_id,
                                  document=encodedImageLink,
@@ -42,24 +40,20 @@ def SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
             print(sys.exc_info()[0])
             sleep(10)
     DidSend = not sendException and numberOfRetries > 0
-    if DidSend and IsTooLongForCaption(caption_text):
-        bot.sendMessage(chat_id=chat_id, text=caption_text, disable_web_page_preview=True)
+    if DidSend and IsTooLongForCaption(requestText):
+        bot.sendMessage(chat_id=chat_id, text=requestText, disable_web_page_preview=True)
     return DidSend
-
 
 def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
     encodedImageLink = imagelink.encode('utf-8')
-    if imagelink[:4] == '.gif':
-        return False
     numberOfRetries = 5
     sendException = True
     while sendException and numberOfRetries > 0:
-        caption_text = requestText + ': ' + encodedImageLink
         try:
-            if not IsTooLongForCaption(caption_text):
+            if not IsTooLongForCaption(requestText):
                 bot.sendPhoto(chat_id=chat_id,
                               photo=encodedImageLink,
-                              caption=caption_text)
+                              caption=requestText)
             else:
                 bot.sendPhoto(chat_id=chat_id,
                               photo=encodedImageLink)
@@ -79,6 +73,6 @@ def SendPhotoWithRetry(bot, chat_id, imagelink, requestText):
             print(sys.exc_info()[1])
             sleep(10)
     DidSend = not sendException and numberOfRetries > 0
-    if DidSend and IsTooLongForCaption(caption_text):
-        bot.sendMessage(chat_id=chat_id, text=caption_text, disable_web_page_preview=True)
+    if DidSend and IsTooLongForCaption(requestText):
+        bot.sendMessage(chat_id=chat_id, text=requestText, disable_web_page_preview=True)
     return DidSend
