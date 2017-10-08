@@ -176,6 +176,8 @@ def Image_Tags(imagelink, keyConfig):
                 print(visionData['responses'][0]['error']['message'])
     else:
         print(visionData['error']['message'])
+    if tags != '' and not tags.startswith('doesn\'t look like anything to me'):
+        tags = 'looks like: ' + tags
     return tags.rstrip(', ')
 
 def Send_Images(bot, chat_id, user, requestText, args, keyConfig, total_number_to_send=1):
@@ -239,6 +241,6 @@ def send_url_and_tags(bot, chat_id, imagelink, keyConfig, requestText):
     imagelink_str = str(imagelink)
     image_tags = Image_Tags(imagelink_str, keyConfig)
     bot.sendMessage(chat_id=chat_id, text=requestText +
-                                          (' looks like: ' + image_tags if image_tags != '' else '') +
+                                          (' ' + image_tags if image_tags != '' else '') +
                                           '\n' + imagelink_str,
                     disable_web_page_preview=True)
