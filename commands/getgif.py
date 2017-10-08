@@ -93,7 +93,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                 if number == 1:
                     if retry_on_telegram_error.SendDocumentWithRetry(bot, chat_id, imagelink, requestText):
                         total_sent += 1
-                    get.send_computer_vision_tags(bot, chat_id, imagelink, keyConfig, requestText)
+                    get.send_url_and_tags(bot, chat_id, imagelink, keyConfig, requestText)
                 else:
                     message = requestText + ': ' + (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
                     bot.sendMessage(chat_id, message)

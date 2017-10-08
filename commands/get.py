@@ -222,7 +222,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                     if retry_on_telegram_error.SendPhotoWithRetry(bot, chat_id, imagelink, requestText +
                             (' ' + str(total_sent + 1) + ' of ' + str(number) if int(number) > 1 else '')):
                         total_sent += 1
-                    send_computer_vision_tags(bot, chat_id, imagelink, keyConfig, requestText)
+                    send_url_and_tags(bot, chat_id, imagelink, keyConfig, requestText)
                 else:
                     message = requestText + ': ' + \
                               (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
@@ -235,10 +235,10 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                                      total_offset, total_sent)
     return total_offset, total_results, total_sent
 
-def send_computer_vision_tags(bot, chat_id, imagelink, keyConfig, requestText):
+def send_url_and_tags(bot, chat_id, imagelink, keyConfig, requestText):
     imagelink_str = str(imagelink)
     image_tags = Image_Tags(imagelink_str, keyConfig)
-    if image_tags != '':
-        bot.sendMessage(chat_id=chat_id, text=requestText + ' looks like: ' + image_tags +
-                                              '\n' + imagelink_str,
-                        disable_web_page_preview=True)
+    bot.sendMessage(chat_id=chat_id, text=requestText +
+                                          (' looks like: ' + image_tags if image_tags != '' else '') +
+                                          '\n' + imagelink_str,
+                    disable_web_page_preview=True)

@@ -25,7 +25,7 @@ class TestGet(unittest.TestCase):
         ndb.get_context().clear_cache()
 
     def test_get(self):
-        requestText = u'whip the cum to a froth'
+        requestText = u'frantasia'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
@@ -35,7 +35,7 @@ class TestGet(unittest.TestCase):
         get.run(bot, chatId, 'SalamiArmy', keyConfig, requestText, 1)
 
     def test_get_group(self):
-        requestText = u'whip the cum to a froth'
+        requestText = u'frantasia'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
