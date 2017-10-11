@@ -1,4 +1,5 @@
 # coding=utf-8
+import logging
 import string
 from threading import Thread
 import urllib
@@ -40,7 +41,12 @@ def is_valid_gif(imagelink):
         except EOFError:
             pass
         else:
-            return int(sys.getsizeof(image_file)) < 10000000
+            total_image_size = int(sys.getsizeof(image_file))
+            logging.info('image is ' + total_image_size + ' bytes big.')
+            is_bellow_threshhold = total_image_size < 10000000
+            logging.info('this is ' + ('below' if is_bellow_threshhold else 'over') +
+                         ' the threshhold of ten million bytes.')
+            return is_bellow_threshhold
     finally:
         try:
             if gif:
@@ -82,7 +88,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
     offset_this_page = 0
     while int(total_sent) < int(number) and int(offset_this_page) < int(results_this_page):
         imagelink = data['items'][offset_this_page]['link']
-        print 'got image link ' + imagelink
+        logging.info('got image link ' + imagelink)
         offset_this_page += 1
         total_offset += 1
         if '?' in imagelink:
@@ -98,6 +104,8 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                     message = requestText + ': ' + (str(total_sent + 1) + ' of ' + str(number) + '\n' if int(number) > 1 else '') + imagelink
                     bot.sendMessage(chat_id, message)
                     total_sent += 1
+            else:
+                logging.info(imagelink + ' invalid')
     if int(total_sent) < int(number) and int(total_offset) < int(total_results):
         args['start'] = total_offset + 1
         data, total_results, results_this_page = get.Google_Custom_Search(args)

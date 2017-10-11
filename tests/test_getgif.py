@@ -40,7 +40,7 @@ class TestGet(unittest.TestCase):
         getgif.run(bot, chatId, 'Admin', keyConfig, requestText, 5)
 
     def test_getgif(self):
-        requestText = u'what a dumb ash'
+        requestText = u'in operation as a company'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
