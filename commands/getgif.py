@@ -46,9 +46,9 @@ def is_valid_gif(imagelink):
             pass
         else:
             total_image_size = int(sys.getsizeof(image_file))
-            logging.info('image is ' + total_image_size + ' bytes big.')
+            logging.info('image is ' + str(total_image_size) + ' bytes big.')
             is_bellow_threshhold = total_image_size < 10000000
-            logging.info('this is ' + ('below' if is_bellow_threshhold else 'over') +
+            logging.info('this is ' + ('below' if str(is_bellow_threshhold) else 'over') +
                          ' the threshhold of ten million bytes.')
             return is_bellow_threshhold
     finally:
@@ -91,7 +91,7 @@ def search_results_walker(args, bot, chat_id, data, number, requestText, results
                           total_sent=0, total_offset=0):
     offset_this_page = 0
     while int(total_sent) < int(number) and int(offset_this_page) < int(results_this_page):
-        imagelink = data['items'][offset_this_page]['link']
+        imagelink = str(data['items'][offset_this_page]['link'])
         logging.info('got image link ' + imagelink)
         offset_this_page += 1
         total_offset += 1
