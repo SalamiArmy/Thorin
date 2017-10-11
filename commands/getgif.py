@@ -31,13 +31,17 @@ def is_valid_gif(imagelink):
     global gif, image_file, fd
     try:
         fd = urllib.urlopen(imagelink)
+        logging.info('can download')
         image_file = io.BytesIO(fd.read())
+        logging.info('can read')
         gif = Image.open(image_file)
+        logging.info('can open as a gif')
     except:
         return False
     else:
         try:
             gif.seek(1)
+            logging.info('can find more than 1 frame in gif')
         except EOFError:
             pass
         else:
