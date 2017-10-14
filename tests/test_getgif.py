@@ -50,7 +50,7 @@ class TestGet(unittest.TestCase):
         getgif.run(bot, chatId, 'Admin', keyConfig, requestText, 1)
 
     def test_getgif_group(self):
-        requestText = u'frantasia'
+        requestText = u'cork screw sex position'
 
         keyConfig = ConfigParser.ConfigParser()
         keyConfig.read(["keys.ini", "..\keys.ini"])
