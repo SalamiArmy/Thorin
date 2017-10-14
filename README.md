@@ -47,8 +47,6 @@ The only thing I ask that if adding a new command that you include a description
 (using a module with it's on README would be da bomb, I'm working on this for my own commands now.) If you have an idea for 
 a command or how we can add multiple backends to Thorin let me know via a Github Issue! I'd love to use Thorin on other chat services.
 
-Open all PR's against the develop branch thanks!
-
 ### License Info
 
 Thorin is distributed under the Apache 2.0 License
